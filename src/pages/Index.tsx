@@ -3,6 +3,7 @@ import MobileHeader from "@/components/layout/MobileHeader";
 import TabNavigation, { TabType } from "@/components/layout/TabNavigation";
 import BDCRatesScreen from "@/components/screens/BDCRatesScreen";
 import CBNRatesScreen from "@/components/screens/CBNRatesScreen";
+import ConverterScreen from "@/components/screens/ConverterScreen";
 import NewsScreen from "@/components/screens/NewsScreen";
 import AboutScreen from "@/components/screens/AboutScreen";
 
@@ -16,6 +17,8 @@ const Index = () => {
         return <BDCRatesScreen />;
       case "cbn-rates":
         return <CBNRatesScreen />;
+      case "converter":
+        return <ConverterScreen />;
       case "news":
         return <NewsScreen />;
       case "about":
