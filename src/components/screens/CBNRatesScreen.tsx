@@ -15,18 +15,18 @@ const cbnRates = [
 
 const CBNRatesScreen = () => {
   return (
-    <div className="p-4 pb-8">
+    <div className="p-3 pb-6">
       {/* Header Card */}
-      <div className="bg-card rounded-xl p-4 mb-4 shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-lg font-semibold text-card-foreground">
+      <div className="bg-card rounded-xl p-3 mb-3 shadow-lg">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-sm font-semibold text-card-foreground">
             CBN Official Rates
           </h2>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-[10px] text-muted-foreground">
             Updated: Today
           </span>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Central Bank of Nigeria official exchange rates
         </p>
       </div>
@@ -34,11 +34,11 @@ const CBNRatesScreen = () => {
       {/* Rates List */}
       <div className="bg-card rounded-xl overflow-hidden shadow-lg">
         {/* Table Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-secondary/10 border-b border-border">
-          <span className="text-sm font-medium text-muted-foreground">Currency</span>
-          <div className="flex gap-4">
-            <span className="text-sm font-medium text-muted-foreground w-24 text-right">Rate (₦)</span>
-            <span className="text-sm font-medium text-muted-foreground w-16 text-right">Change</span>
+        <div className="flex items-center justify-between px-3 py-2 bg-secondary/10 border-b border-border">
+          <span className="text-xs font-medium text-muted-foreground">Currency</span>
+          <div className="flex gap-3">
+            <span className="text-xs font-medium text-muted-foreground w-20 text-right">Rate (₦)</span>
+            <span className="text-xs font-medium text-muted-foreground w-12 text-right">Change</span>
           </div>
         </div>
 
@@ -46,34 +46,34 @@ const CBNRatesScreen = () => {
         {cbnRates.map((currency, index) => (
           <div
             key={currency.code}
-            className={`flex items-center justify-between px-4 py-4 ${
+            className={`flex items-center justify-between px-3 py-2.5 ${
               index !== cbnRates.length - 1 ? "border-b border-border/50" : ""
             }`}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{currency.flag}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-base">{currency.flag}</span>
               <div>
-                <span className="font-semibold text-card-foreground block">
+                <span className="font-semibold text-card-foreground block text-xs">
                   {currency.code}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-[10px] text-muted-foreground">
                   {currency.name}
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-card-foreground font-bold w-24 text-right">
+            <div className="flex items-center gap-3">
+              <span className="text-card-foreground font-bold w-20 text-right text-xs">
                 ₦{currency.rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </span>
-              <div className={`flex items-center gap-1 w-16 justify-end ${
+              <div className={`flex items-center gap-0.5 w-12 justify-end ${
                 currency.change >= 0 ? "text-green-600" : "text-red-500"
               }`}>
                 {currency.change >= 0 ? (
-                  <TrendingUp className="w-4 h-4" />
+                  <TrendingUp className="w-3 h-3" />
                 ) : (
-                  <TrendingDown className="w-4 h-4" />
+                  <TrendingDown className="w-3 h-3" />
                 )}
-                <span className="text-sm font-medium">
+                <span className="text-[10px] font-medium">
                   {Math.abs(currency.change)}%
                 </span>
               </div>
