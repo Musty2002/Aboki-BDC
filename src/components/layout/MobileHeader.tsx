@@ -20,7 +20,7 @@ const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) =
               <circle cx="12" cy="14" r="4" fill="hsl(var(--primary))" />
             </svg>
           </div>
-          <h1 className="font-brand text-xl text-primary-foreground tracking-wide">
+          <h1 className="font-bold text-lg text-primary-foreground tracking-tight whitespace-nowrap">
             Aboki Bureau De Change
           </h1>
         </div>
