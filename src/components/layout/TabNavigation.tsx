@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export type TabType = "bdc-rates" | "cbn-rates" | "news" | "about";
+export type TabType = "bdc-rates" | "cbn-rates" | "converter" | "news" | "about";
 
 interface TabNavigationProps {
   activeTab: TabType;
@@ -10,6 +10,7 @@ interface TabNavigationProps {
 const tabs: { id: TabType; label: string }[] = [
   { id: "bdc-rates", label: "BDC/Rates" },
   { id: "cbn-rates", label: "CBN Rates" },
+  { id: "converter", label: "Converter" },
   { id: "news", label: "News" },
   { id: "about", label: "About us" },
 ];
