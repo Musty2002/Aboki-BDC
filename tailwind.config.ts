@@ -57,6 +57,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Aboki custom colors
+        aboki: {
+          red: "hsl(var(--aboki-red))",
+          dark: "hsl(var(--aboki-dark))",
+          card: "hsl(var(--aboki-card))",
+          badge: "hsl(var(--aboki-badge))",
+        },
+      },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+        brand: ['Playfair Display', 'serif'],
       },
       borderRadius: {
         lg: "var(--radius)",
