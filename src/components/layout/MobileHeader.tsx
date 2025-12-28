@@ -10,7 +10,7 @@ const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) =
     <header className="bg-primary safe-top sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo/Brand */}
-        <h1 className="font-bold text-lg text-primary-foreground tracking-tight whitespace-nowrap">
+        <h1 className="font-semibold text-sm text-primary-foreground tracking-tight whitespace-nowrap">
           Aboki Bureau De Change
         </h1>
 
