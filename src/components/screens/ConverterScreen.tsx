@@ -153,14 +153,14 @@ const ConverterScreen = forwardRef<HTMLDivElement, ConverterScreenProps>(
               </div>
             </div>
             
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 bg-secondary/30 rounded-lg px-3 h-10">
+            <div className="flex items-center gap-3 bg-secondary/20 rounded-xl p-2">
+              <div className="flex items-center gap-2 bg-card rounded-lg px-3 py-2 shadow-sm">
                 <img
                   src={`https://flagcdn.com/24x18/${isBuying ? getFlagCode(selectedCurrency) : "ng"}.png`}
                   alt={isBuying ? selectedCurrency : "NGN"}
                   className="w-5 h-4 object-cover rounded-sm"
                 />
-                <span className="text-xs font-semibold text-card-foreground">
+                <span className="text-sm font-bold text-card-foreground">
                   {isBuying ? selectedCurrency : "NGN"}
                 </span>
               </div>
@@ -169,7 +169,7 @@ const ConverterScreen = forwardRef<HTMLDivElement, ConverterScreenProps>(
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="flex-1 bg-transparent text-xl font-bold text-card-foreground outline-none text-right h-10"
+                className="flex-1 bg-transparent text-2xl font-bold text-card-foreground outline-none text-right min-w-0"
               />
             </div>
           </div>
