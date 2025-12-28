@@ -136,7 +136,7 @@ const ConverterScreen = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-secondary/30 rounded-lg px-2.5 py-2">
+            <div className="flex items-center gap-2 bg-secondary/30 rounded-lg px-2.5 py-2.5 min-w-[70px]">
               <img
                 src={`https://flagcdn.com/24x18/${isBuying ? getFlagCode(selectedCurrency) : "ng"}.png`}
                 alt={isBuying ? selectedCurrency : "NGN"}
@@ -151,7 +151,7 @@ const ConverterScreen = () => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.00"
-              className="flex-1 bg-transparent text-xl font-bold text-card-foreground outline-none text-right"
+              className="flex-1 bg-transparent text-xl font-bold text-card-foreground outline-none text-right min-h-[40px]"
             />
           </div>
         </div>
