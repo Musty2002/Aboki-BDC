@@ -1,4 +1,6 @@
+import { useState, useEffect, forwardRef } from "react";
 import BranchRateCard from "@/components/rates/BranchRateCard";
+import { RateCardSkeleton } from "@/components/ui/LoadingSkeleton";
 
 // Sample data for 6 branches
 const branchesData = [
@@ -61,18 +63,47 @@ const branchesData = [
   },
 ];
 
-const BDCRatesScreen = () => {
-  return (
-    <div className="flex flex-col gap-4 p-4 pb-8">
-      {branchesData.map((branch) => (
-        <BranchRateCard
-          key={branch.name}
-          branchName={branch.name}
-          currencies={branch.currencies}
-        />
-      ))}
-    </div>
-  );
-};
+interface BDCRatesScreenProps {
+  onRefresh?: () => Promise<void>;
+}
+
+const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
+  ({ onRefresh }, ref) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [data, setData] = useState(branchesData);
+
+    useEffect(() => {
+      // Simulate initial load
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }, []);
+
+    if (isLoading) {
+      return (
+        <div className="flex flex-col gap-4 p-4 pb-8">
+          {[1, 2, 3, 4].map((i) => (
+            <RateCardSkeleton key={i} />
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div ref={ref} className="flex flex-col gap-4 p-4 pb-8">
+        {data.map((branch) => (
+          <BranchRateCard
+            key={branch.name}
+            branchName={branch.name}
+            currencies={branch.currencies}
+          />
+        ))}
+      </div>
+    );
+  }
+);
+
+BDCRatesScreen.displayName = "BDCRatesScreen";
 
 export default BDCRatesScreen;

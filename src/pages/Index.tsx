@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import MobileHeader from "@/components/layout/MobileHeader";
 import TabNavigation, { TabType } from "@/components/layout/TabNavigation";
 import BDCRatesScreen from "@/components/screens/BDCRatesScreen";
@@ -6,25 +6,44 @@ import CBNRatesScreen from "@/components/screens/CBNRatesScreen";
 import ConverterScreen from "@/components/screens/ConverterScreen";
 import NewsScreen from "@/components/screens/NewsScreen";
 import AboutScreen from "@/components/screens/AboutScreen";
+import PullToRefresh from "@/components/ui/PullToRefresh";
+import { usePullToRefresh } from "@/hooks/usePullToRefresh";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>("bdc-rates");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleRefresh = useCallback(async () => {
+    // Simulate refresh delay
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setRefreshKey((prev) => prev + 1);
+    toast({
+      title: "Refreshed",
+      description: "Data has been updated",
+      duration: 2000,
+    });
+  }, []);
+
+  const { containerRef, isRefreshing, pullDistance, handlers } = usePullToRefresh({
+    onRefresh: handleRefresh,
+  });
 
   const renderScreen = () => {
     switch (activeTab) {
       case "bdc-rates":
-        return <BDCRatesScreen />;
+        return <BDCRatesScreen key={`bdc-${refreshKey}`} />;
       case "cbn-rates":
-        return <CBNRatesScreen />;
+        return <CBNRatesScreen key={`cbn-${refreshKey}`} />;
       case "converter":
-        return <ConverterScreen />;
+        return <ConverterScreen key={`converter-${refreshKey}`} />;
       case "news":
-        return <NewsScreen />;
+        return <NewsScreen key={`news-${refreshKey}`} />;
       case "about":
-        return <AboutScreen />;
+        return <AboutScreen key={`about-${refreshKey}`} />;
       default:
-        return <BDCRatesScreen />;
+        return <BDCRatesScreen key={`bdc-default-${refreshKey}`} />;
     }
   };
 
@@ -39,10 +58,18 @@ const Index = () => {
       {/* Tab Navigation */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {/* Scrollable Content */}
-      <main className="flex-1 overflow-y-auto safe-bottom">
+      {/* Scrollable Content with Pull to Refresh */}
+      <PullToRefresh
+        ref={containerRef}
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        onTouchStart={handlers.onTouchStart}
+        onTouchMove={handlers.onTouchMove}
+        onTouchEnd={handlers.onTouchEnd}
+        className="flex-1 safe-bottom"
+      >
         {renderScreen()}
-      </main>
+      </PullToRefresh>
     </div>
   );
 };

@@ -1,4 +1,6 @@
+import { useState, useEffect, forwardRef } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { CBNRateSkeleton } from "@/components/ui/LoadingSkeleton";
 
 const cbnRates = [
   { code: "USD", flag: "🇺🇸", name: "US Dollar", rate: 1550.00, change: 2.5 },
@@ -31,80 +33,102 @@ const getFlagCode = (currencyCode: string): string => {
   return map[currencyCode] || "un";
 };
 
-const CBNRatesScreen = () => {
-  return (
-    <div className="p-3 pb-6">
-      {/* Header Card */}
-      <div className="bg-card rounded-xl p-3 mb-3 shadow-lg">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-sm font-semibold text-card-foreground">
-            CBN Official Rates
-          </h2>
-          <span className="text-[10px] text-muted-foreground">
-            Updated: Today
-          </span>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Central Bank of Nigeria official exchange rates
-        </p>
-      </div>
+interface CBNRatesScreenProps {
+  onRefresh?: () => Promise<void>;
+}
 
-      {/* Rates List */}
-      <div className="bg-card rounded-xl overflow-hidden shadow-lg">
-        {/* Table Header */}
-        <div className="flex items-center justify-between px-3 py-2 bg-secondary/10 border-b border-border">
-          <span className="text-xs font-medium text-muted-foreground">Currency</span>
-          <div className="flex gap-3">
-            <span className="text-xs font-medium text-muted-foreground w-20 text-right">Rate (₦)</span>
-            <span className="text-xs font-medium text-muted-foreground w-12 text-right">Change</span>
+const CBNRatesScreen = forwardRef<HTMLDivElement, CBNRatesScreenProps>(
+  ({ onRefresh }, ref) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [data, setData] = useState(cbnRates);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }, []);
+
+    if (isLoading) {
+      return <CBNRateSkeleton />;
+    }
+
+    return (
+      <div ref={ref} className="p-3 pb-6">
+        {/* Header Card */}
+        <div className="bg-card rounded-xl p-3 mb-3 shadow-lg">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="text-sm font-semibold text-card-foreground">
+              CBN Official Rates
+            </h2>
+            <span className="text-[10px] text-muted-foreground">
+              Updated: Today
+            </span>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Central Bank of Nigeria official exchange rates
+          </p>
         </div>
 
-        {/* Currency Rows */}
-        {cbnRates.map((currency, index) => (
-          <div
-            key={currency.code}
-            className={`flex items-center justify-between px-3 py-2.5 ${
-              index !== cbnRates.length - 1 ? "border-b border-border/50" : ""
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <img 
-                src={`https://flagcdn.com/24x18/${getFlagCode(currency.code)}.png`}
-                alt={currency.code}
-                className="w-5 h-4 object-cover rounded-sm"
-              />
-              <div>
-                <span className="font-semibold text-card-foreground block text-xs">
-                  {currency.code}
-                </span>
-                <span className="text-[10px] text-muted-foreground">
-                  {currency.name}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-card-foreground font-bold w-20 text-right text-xs">
-                ₦{currency.rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-              </span>
-              <div className={`flex items-center gap-0.5 w-12 justify-end ${
-                currency.change >= 0 ? "text-green-600" : "text-red-500"
-              }`}>
-                {currency.change >= 0 ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
-                <span className="text-[10px] font-medium">
-                  {Math.abs(currency.change)}%
-                </span>
-              </div>
+        {/* Rates List */}
+        <div className="bg-card rounded-xl overflow-hidden shadow-lg">
+          {/* Table Header */}
+          <div className="flex items-center justify-between px-3 py-2 bg-secondary/10 border-b border-border">
+            <span className="text-xs font-medium text-muted-foreground">Currency</span>
+            <div className="flex gap-3">
+              <span className="text-xs font-medium text-muted-foreground w-20 text-right">Rate (₦)</span>
+              <span className="text-xs font-medium text-muted-foreground w-12 text-right">Change</span>
             </div>
           </div>
-        ))}
+
+          {/* Currency Rows */}
+          {data.map((currency, index) => (
+            <div
+              key={currency.code}
+              className={`flex items-center justify-between px-3 py-2.5 ${
+                index !== data.length - 1 ? "border-b border-border/50" : ""
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <img 
+                  src={`https://flagcdn.com/24x18/${getFlagCode(currency.code)}.png`}
+                  alt={currency.code}
+                  className="w-5 h-4 object-cover rounded-sm"
+                />
+                <div>
+                  <span className="font-semibold text-card-foreground block text-xs">
+                    {currency.code}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {currency.name}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-card-foreground font-bold w-20 text-right text-xs">
+                  ₦{currency.rate.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+                <div className={`flex items-center gap-0.5 w-12 justify-end ${
+                  currency.change >= 0 ? "text-green-600" : "text-red-500"
+                }`}>
+                  {currency.change >= 0 ? (
+                    <TrendingUp className="w-3 h-3" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3" />
+                  )}
+                  <span className="text-[10px] font-medium">
+                    {Math.abs(currency.change)}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
+CBNRatesScreen.displayName = "CBNRatesScreen";
 
 export default CBNRatesScreen;
