@@ -14,6 +14,30 @@ interface BranchRateCardProps {
   currencies: Currency[];
 }
 
+// Map currency codes to country codes for flag images
+const getFlagCode = (currencyCode: string): string => {
+  const map: Record<string, string> = {
+    USD: "us",
+    EUR: "eu",
+    GBP: "gb",
+    CAD: "ca",
+    AED: "ae",
+    ZAR: "za",
+    CNY: "cn",
+    CHF: "ch",
+    AUD: "au",
+    JPY: "jp",
+    SAR: "sa",
+    KWD: "kw",
+    QAR: "qa",
+    OMR: "om",
+    BHD: "bh",
+    EGP: "eg",
+    NGN: "ng",
+  };
+  return map[currencyCode] || "un";
+};
+
 const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -75,7 +99,11 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
               className="flex items-center justify-between py-2 border-b border-border/50 last:border-0"
             >
               <div className="flex items-center gap-2">
-                <span className="text-lg leading-none">{currency.flag}</span>
+                <img 
+                  src={`https://flagcdn.com/24x18/${getFlagCode(currency.code)}.png`}
+                  alt={currency.code}
+                  className="w-5 h-4 object-cover rounded-sm"
+                />
                 <span className="font-medium text-card-foreground text-xs">{currency.code}</span>
               </div>
               <div className="flex gap-6">

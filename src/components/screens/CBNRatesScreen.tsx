@@ -13,6 +13,24 @@ const cbnRates = [
   { code: "AED", flag: "🇦🇪", name: "UAE Dirham", rate: 420.00, change: 0.1 },
 ];
 
+// Map currency codes to country codes for flag images
+const getFlagCode = (currencyCode: string): string => {
+  const map: Record<string, string> = {
+    USD: "us",
+    EUR: "eu",
+    GBP: "gb",
+    CAD: "ca",
+    CHF: "ch",
+    AUD: "au",
+    JPY: "jp",
+    CNY: "cn",
+    ZAR: "za",
+    AED: "ae",
+    NGN: "ng",
+  };
+  return map[currencyCode] || "un";
+};
+
 const CBNRatesScreen = () => {
   return (
     <div className="p-3 pb-6">
@@ -51,7 +69,11 @@ const CBNRatesScreen = () => {
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-base">{currency.flag}</span>
+              <img 
+                src={`https://flagcdn.com/24x18/${getFlagCode(currency.code)}.png`}
+                alt={currency.code}
+                className="w-5 h-4 object-cover rounded-sm"
+              />
               <div>
                 <span className="font-semibold text-card-foreground block text-xs">
                   {currency.code}
