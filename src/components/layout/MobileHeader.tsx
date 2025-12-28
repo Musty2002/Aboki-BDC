@@ -10,20 +10,9 @@ const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) =
     <header className="bg-primary safe-top sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Logo/Brand */}
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-8 flex items-center justify-center">
-            <svg viewBox="0 0 24 32" className="w-full h-full text-primary-foreground">
-              <path
-                d="M12 2C12 2 4 8 4 16C4 24 12 30 12 30C12 30 20 24 20 16C20 8 12 2 12 2Z"
-                fill="currentColor"
-              />
-              <circle cx="12" cy="14" r="4" fill="hsl(var(--primary))" />
-            </svg>
-          </div>
-          <h1 className="font-bold text-lg text-primary-foreground tracking-tight whitespace-nowrap">
-            Aboki Bureau De Change
-          </h1>
-        </div>
+        <h1 className="font-bold text-lg text-primary-foreground tracking-tight whitespace-nowrap">
+          Aboki Bureau De Change
+        </h1>
 
         {/* Action Icons */}
         <div className="flex items-center gap-3">
