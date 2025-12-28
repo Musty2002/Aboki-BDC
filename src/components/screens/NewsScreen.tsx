@@ -33,51 +33,51 @@ const newsArticles = [
 
 const NewsScreen = () => {
   return (
-    <div className="p-4 pb-8">
+    <div className="p-3 pb-6">
       {/* Featured Article */}
-      <div className="bg-card rounded-xl overflow-hidden shadow-lg mb-4">
-        <div className="bg-gradient-to-br from-primary to-primary/80 p-6">
-          <span className="inline-block px-3 py-1 bg-primary-foreground/20 rounded-full text-xs text-primary-foreground font-medium mb-3">
+      <div className="bg-card rounded-xl overflow-hidden shadow-lg mb-3">
+        <div className="bg-gradient-to-br from-primary to-primary/80 p-4">
+          <span className="inline-block px-2 py-0.5 bg-primary-foreground/20 rounded-full text-[10px] text-primary-foreground font-medium mb-2">
             Featured
           </span>
-          <h2 className="text-xl font-bold text-primary-foreground mb-2">
+          <h2 className="text-sm font-bold text-primary-foreground mb-1">
             Weekly Forex Market Summary
           </h2>
-          <p className="text-primary-foreground/80 text-sm mb-3">
+          <p className="text-primary-foreground/80 text-xs mb-2">
             Get the latest insights on currency movements and market trends affecting Nigerian forex rates.
           </p>
-          <div className="flex items-center gap-2 text-primary-foreground/60 text-xs">
-            <Clock className="w-4 h-4" />
+          <div className="flex items-center gap-1.5 text-primary-foreground/60 text-[10px]">
+            <Clock className="w-3 h-3" />
             <span>Dec 28, 2024</span>
           </div>
         </div>
       </div>
 
       {/* News List */}
-      <h3 className="text-lg font-semibold text-foreground mb-3">Latest News</h3>
-      <div className="flex flex-col gap-3">
+      <h3 className="text-sm font-semibold text-foreground mb-2">Latest News</h3>
+      <div className="flex flex-col gap-2">
         {newsArticles.map((article) => (
           <button
             key={article.id}
-            className="bg-card rounded-xl p-4 shadow-lg text-left ios-transition active:scale-[0.98]"
+            className="bg-card rounded-xl p-3 shadow-lg text-left ios-transition active:scale-[0.98]"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
-                <span className="inline-block px-2 py-0.5 bg-primary/10 rounded text-xs text-primary font-medium mb-2">
+                <span className="inline-block px-1.5 py-0.5 bg-primary/10 rounded text-[10px] text-primary font-medium mb-1">
                   {article.category}
                 </span>
-                <h4 className="font-semibold text-card-foreground mb-1 line-clamp-2">
+                <h4 className="font-semibold text-card-foreground mb-0.5 line-clamp-2 text-xs">
                   {article.title}
                 </h4>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                <p className="text-[11px] text-muted-foreground line-clamp-2 mb-1">
                   {article.excerpt}
                 </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="w-3 h-3" />
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <Clock className="w-2.5 h-2.5" />
                   <span>{article.date}</span>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-1" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
             </div>
           </button>
         ))}

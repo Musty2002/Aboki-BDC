@@ -26,27 +26,27 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
       >
         <div className="flex items-center gap-3">
           {/* Location Pin */}
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-5 h-5 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <MapPin className="w-4 h-4 text-primary-foreground" />
           </div>
           
           {/* Branch Name */}
-          <span className="text-card-foreground font-semibold text-lg tracking-wide uppercase">
+          <span className="text-card-foreground font-semibold text-sm tracking-wide uppercase">
             {branchName} RATES
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Currency Count Badge */}
-          <span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
+          <span className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">
             {currencies.length}
           </span>
           
           {/* Chevron */}
           {isExpanded ? (
-            <ChevronUp className="w-6 h-6 text-primary" />
+            <ChevronUp className="w-5 h-5 text-primary" />
           ) : (
-            <ChevronDown className="w-6 h-6 text-primary" />
+            <ChevronDown className="w-5 h-5 text-primary" />
           )}
         </div>
       </button>
@@ -60,11 +60,11 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
       >
         <div className="px-4 pb-4">
           {/* Header Row */}
-          <div className="flex items-center justify-between py-2 border-b border-border mb-2">
-            <span className="text-sm font-medium text-muted-foreground">Currency</span>
-            <div className="flex gap-8">
-              <span className="text-sm font-medium text-muted-foreground w-20 text-right">Buy</span>
-              <span className="text-sm font-medium text-muted-foreground w-20 text-right">Sell</span>
+          <div className="flex items-center justify-between py-1.5 border-b border-border mb-1">
+            <span className="text-xs font-medium text-muted-foreground">Currency</span>
+            <div className="flex gap-6">
+              <span className="text-xs font-medium text-muted-foreground w-16 text-right">Buy</span>
+              <span className="text-xs font-medium text-muted-foreground w-16 text-right">Sell</span>
             </div>
           </div>
 
@@ -72,17 +72,17 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
           {currencies.map((currency) => (
             <div
               key={currency.code}
-              className="flex items-center justify-between py-3 border-b border-border/50 last:border-0"
+              className="flex items-center justify-between py-2 border-b border-border/50 last:border-0"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{currency.flag}</span>
-                <span className="font-medium text-card-foreground">{currency.code}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">{currency.flag}</span>
+                <span className="font-medium text-card-foreground text-xs">{currency.code}</span>
               </div>
-              <div className="flex gap-8">
-                <span className="text-card-foreground font-semibold w-20 text-right">
+              <div className="flex gap-6">
+                <span className="text-card-foreground font-semibold w-16 text-right text-xs">
                   ₦{currency.buyRate.toLocaleString()}
                 </span>
-                <span className="text-card-foreground font-semibold w-20 text-right">
+                <span className="text-card-foreground font-semibold w-16 text-right text-xs">
                   ₦{currency.sellRate.toLocaleString()}
                 </span>
               </div>
