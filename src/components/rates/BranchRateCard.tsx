@@ -74,8 +74,8 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
               key={currency.code}
               className="flex items-center justify-between py-2 border-b border-border/50 last:border-0"
             >
-              <div className="flex items-center gap-1.5">
-                <span className="text-base">{currency.flag}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg leading-none">{currency.flag}</span>
                 <span className="font-medium text-card-foreground text-xs">{currency.code}</span>
               </div>
               <div className="flex gap-6">
