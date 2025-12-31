@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { MapPin, Phone, Mail, Clock, MessageCircle, Facebook, Instagram, Twitter, Shield, Target, AlertCircle } from "lucide-react";
 import { AboutSkeleton } from "@/components/ui/LoadingSkeleton";
+import abokiLogo from "@/assets/aboki-logo.jpg";
 
 const branches = [
   { name: "Abuja", address: "123 Central Business District, Abuja", phone: "+234 800 123 4567" },
@@ -35,9 +36,11 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
         {/* Company Info Card */}
         <div className="bg-card rounded-xl p-3 shadow-lg mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
-              <span className="font-bold text-primary-foreground text-sm">A</span>
-            </div>
+            <img 
+              src={abokiLogo} 
+              alt="Aboki BDC" 
+              className="w-10 h-10 rounded-full object-cover"
+            />
             <h2 className="font-bold text-card-foreground text-sm">Aboki Bureau De Change</h2>
           </div>
         </div>
