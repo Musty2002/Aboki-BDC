@@ -3,7 +3,6 @@ import { Bell } from "lucide-react";
 import { branchesData, Branch, CityData } from "@/data/branchesData";
 import CityCard from "@/components/rates/CityCard";
 import BranchDetailSheet from "@/components/rates/BranchDetailSheet";
-import SearchFilter from "@/components/rates/SearchFilter";
 import RateAlertModal from "@/components/rates/RateAlertModal";
 import { RateCardSkeleton } from "@/components/ui/LoadingSkeleton";
 import { useRateAlerts } from "@/hooks/useRateAlerts";
@@ -19,10 +18,6 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
     const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
     const [showBranchDetail, setShowBranchDetail] = useState(false);
     const [showRateAlert, setShowRateAlert] = useState(false);
-    
-    // Search and filter state
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
 
     const { alerts } = useRateAlerts();
 
@@ -33,49 +28,9 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
       return () => clearTimeout(timer);
     }, []);
 
-    // Filter cities and branches based on search and currency filters
-    const filteredData = data
-      .map((cityData) => {
-        // Filter branches within the city
-        const filteredBranches = cityData.branches.filter((branch) => {
-          // Search filter
-          const matchesSearch =
-            searchQuery === "" ||
-            cityData.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            branch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            branch.address.toLowerCase().includes(searchQuery.toLowerCase());
-
-          // Currency filter
-          const matchesCurrency =
-            selectedCurrencies.length === 0 ||
-            branch.currencies.some((c) => selectedCurrencies.includes(c.code));
-
-          return matchesSearch && matchesCurrency;
-        });
-
-        return {
-          ...cityData,
-          branches: filteredBranches,
-        };
-      })
-      .filter((cityData) => cityData.branches.length > 0);
-
     const handleBranchSelect = (branch: Branch) => {
       setSelectedBranch(branch);
       setShowBranchDetail(true);
-    };
-
-    const handleCurrencyToggle = (currency: string) => {
-      setSelectedCurrencies((prev) =>
-        prev.includes(currency)
-          ? prev.filter((c) => c !== currency)
-          : [...prev, currency]
-      );
-    };
-
-    const handleClearFilters = () => {
-      setSearchQuery("");
-      setSelectedCurrencies([]);
     };
 
     if (isLoading) {
@@ -91,15 +46,6 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
     return (
       <>
         <div ref={ref} className="flex flex-col gap-4 p-4 pb-8">
-          {/* Search and Filter */}
-          <SearchFilter
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedCurrencies={selectedCurrencies}
-            onCurrencyToggle={handleCurrencyToggle}
-            onClearFilters={handleClearFilters}
-          />
-
           {/* Alerts Badge */}
           {alerts.length > 0 && (
             <button
@@ -117,25 +63,13 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
           )}
 
           {/* City Cards */}
-          {filteredData.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No branches found matching your search.</p>
-              <button
-                onClick={handleClearFilters}
-                className="text-primary text-sm font-medium mt-2 hover:underline"
-              >
-                Clear filters
-              </button>
-            </div>
-          ) : (
-            filteredData.map((cityData) => (
-              <CityCard
-                key={cityData.city}
-                cityData={cityData}
-                onBranchSelect={handleBranchSelect}
-              />
-            ))
-          )}
+          {data.map((cityData) => (
+            <CityCard
+              key={cityData.city}
+              cityData={cityData}
+              onBranchSelect={handleBranchSelect}
+            />
+          ))}
         </div>
 
         {/* Branch Detail Sheet */}
