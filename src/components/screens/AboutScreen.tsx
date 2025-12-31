@@ -48,7 +48,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
             <Target className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-card-foreground text-xs">Our Mission</h3>
           </div>
-          <p className="text-xs text-foreground leading-relaxed">
+          <p className="text-xs text-card-foreground leading-relaxed">
             At Aboki Bureau De Change, our mission is to empower individuals and businesses with accurate, 
             up-to-date foreign exchange information—delivered in a safe, legal, and fully transparent manner.
           </p>
@@ -60,7 +60,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
             <Shield className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-card-foreground text-xs">Regulatory Compliance</h3>
           </div>
-          <p className="text-xs text-foreground leading-relaxed">
+          <p className="text-xs text-card-foreground leading-relaxed">
             Aboki Bureau De Change operates in strict accordance with the Nigerian Foreign Exchange 
             (Monitoring and Miscellaneous Provisions) Act and all applicable Central Bank of Nigeria (CBN) regulations. 
             We are committed to upholding the highest standards of legal and ethical conduct in the foreign exchange industry.
