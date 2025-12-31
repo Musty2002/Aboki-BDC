@@ -22,7 +22,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+        {showSplash && <SplashScreen onComplete={handleSplashComplete} duration={6000} />}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
