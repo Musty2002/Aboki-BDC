@@ -100,14 +100,14 @@ export default function AdminSetup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="h-16 w-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <Shield className="h-8 w-8 text-red-600" />
             </div>
-            <h1 className="text-2xl font-bold text-card-foreground">Admin Setup</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold text-slate-900">Admin Setup</h1>
+            <p className="text-sm text-slate-600 mt-1">
               Initialize your admin account and seed data
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function AdminSetup() {
           {/* Form */}
           <div className="space-y-4 mb-6">
             <div className="space-y-2">
-              <Label htmlFor="setupKey">Setup Key *</Label>
+              <Label htmlFor="setupKey" className="text-slate-700">Setup Key *</Label>
               <Input
                 id="setupKey"
                 type="password"
@@ -123,14 +123,15 @@ export default function AdminSetup() {
                 onChange={(e) => setSetupKey(e.target.value)}
                 placeholder="Enter setup key"
                 disabled={isRunning}
+                className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-500">
                 Default: aboki-admin-setup-2024
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="adminEmail">Admin Email *</Label>
+              <Label htmlFor="adminEmail" className="text-slate-700">Admin Email *</Label>
               <Input
                 id="adminEmail"
                 type="email"
@@ -138,11 +139,12 @@ export default function AdminSetup() {
                 onChange={(e) => setAdminEmail(e.target.value)}
                 placeholder="admin@example.com"
                 disabled={isRunning}
+                className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="adminPassword">Admin Password *</Label>
+              <Label htmlFor="adminPassword" className="text-slate-700">Admin Password *</Label>
               <Input
                 id="adminPassword"
                 type="password"
@@ -150,17 +152,19 @@ export default function AdminSetup() {
                 onChange={(e) => setAdminPassword(e.target.value)}
                 placeholder="Minimum 6 characters"
                 disabled={isRunning}
+                className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="adminName">Admin Name</Label>
+              <Label htmlFor="adminName" className="text-slate-700">Admin Name</Label>
               <Input
                 id="adminName"
                 value={adminName}
                 onChange={(e) => setAdminName(e.target.value)}
                 placeholder="Super Admin"
                 disabled={isRunning}
+                className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -170,24 +174,24 @@ export default function AdminSetup() {
             {steps.map(step => (
               <div 
                 key={step.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-slate-50"
+                className="flex items-center gap-3 p-3 rounded-lg bg-slate-100"
               >
                 {step.status === 'pending' && (
-                  <div className="h-5 w-5 rounded-full border-2 border-muted" />
+                  <div className="h-5 w-5 rounded-full border-2 border-slate-300" />
                 )}
                 {step.status === 'loading' && (
-                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <Loader2 className="h-5 w-5 animate-spin text-red-600" />
                 )}
                 {step.status === 'success' && (
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
                 )}
                 {step.status === 'error' && (
-                  <XCircle className="h-5 w-5 text-destructive" />
+                  <XCircle className="h-5 w-5 text-red-600" />
                 )}
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{step.title}</p>
+                  <p className="text-sm font-medium text-slate-900">{step.title}</p>
                   {step.message && (
-                    <p className={`text-xs ${step.status === 'error' ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    <p className={`text-xs ${step.status === 'error' ? 'text-red-600' : 'text-slate-500'}`}>
                       {step.message}
                     </p>
                   )}
@@ -224,7 +228,7 @@ export default function AdminSetup() {
           )}
 
           {hasErrors && (
-            <p className="text-xs text-center text-muted-foreground mt-4">
+            <p className="text-xs text-center text-slate-500 mt-4">
               Some steps failed. You can retry or proceed to login if admin was created.
             </p>
           )}

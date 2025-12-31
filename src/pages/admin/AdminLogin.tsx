@@ -84,7 +84,7 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-card rounded-2xl shadow-lg border border-border p-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
           {/* Logo */}
           <div className="text-center mb-8">
             <img 
@@ -92,41 +92,41 @@ export default function AdminLogin() {
               alt="Aboki"
               className="h-12 w-auto mx-auto mb-4"
             />
-            <h1 className="text-2xl font-bold text-card-foreground">Admin Login</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold text-slate-900">Admin Login</h1>
+            <p className="text-sm text-slate-600 mt-1">
               Sign in to manage your BDC operations
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-slate-700">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="admin@aboki.com"
                 {...register('email')}
-                className={errors.email ? 'border-destructive' : ''}
+                className={`bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 ${errors.email ? 'border-red-500' : ''}`}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-red-600">{errors.email.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-slate-700">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   {...register('password')}
-                  className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
+                  className={`bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 pr-10 ${errors.password ? 'border-red-500' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -136,7 +136,7 @@ export default function AdminLogin() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-red-600">{errors.password.message}</p>
               )}
             </div>
 
@@ -156,7 +156,7 @@ export default function AdminLogin() {
             </Button>
           </form>
 
-          <p className="text-xs text-center text-muted-foreground mt-6">
+          <p className="text-xs text-center text-slate-500 mt-6">
             Only authorized administrators can access this area.
           </p>
         </div>

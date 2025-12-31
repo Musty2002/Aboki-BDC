@@ -10,7 +10,7 @@ export function AdminLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex bg-slate-50 text-slate-900">
       {/* Sidebar */}
       <AdminSidebar 
         isOpen={sidebarOpen} 
@@ -28,7 +28,7 @@ export function AdminLayout() {
           onSignOut={signOut}
         />
 
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto text-slate-900">
           <Outlet />
         </main>
       </div>
