@@ -262,30 +262,30 @@ export default function AdminCities() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {cities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <MapPin className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No cities found</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <MapPin className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No cities found</h3>
+            <p className="text-sm text-slate-500 mt-1">
               Get started by adding your first city
             </p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>City Name</TableHead>
-                <TableHead>Branches</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+              <TableRow className="bg-slate-50">
+                <TableHead className="text-slate-700">City Name</TableHead>
+                <TableHead className="text-slate-700">Branches</TableHead>
+                <TableHead className="text-slate-700">Status</TableHead>
+                <TableHead className="w-24 text-slate-700">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {cities.map(city => (
                 <TableRow key={city.id}>
-                  <TableCell className="font-medium">{city.name}</TableCell>
-                  <TableCell>{city.branchCount} branches</TableCell>
+                  <TableCell className="font-medium text-slate-900">{city.name}</TableCell>
+                  <TableCell className="text-slate-700">{city.branchCount} branches</TableCell>
                   <TableCell>
                     <Badge 
                       variant={city.is_active ? 'default' : 'secondary'}

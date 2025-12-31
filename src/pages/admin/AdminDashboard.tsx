@@ -124,46 +124,46 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link 
             to="/admin/rates"
-            className="bg-card rounded-xl p-6 border border-border hover:border-primary/50 transition-colors group"
+            className="bg-white rounded-xl p-6 border border-slate-200 hover:border-red-300 transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-card-foreground">Quick Rates Update</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="font-semibold text-slate-900">Quick Rates Update</h3>
+                <p className="text-sm text-slate-500 mt-1">
                   Update exchange rates across all branches
                 </p>
               </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-red-600 transition-colors" />
             </div>
           </Link>
 
           <Link 
             to="/admin/notifications"
-            className="bg-card rounded-xl p-6 border border-border hover:border-primary/50 transition-colors group"
+            className="bg-white rounded-xl p-6 border border-slate-200 hover:border-red-300 transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-card-foreground">Send Notification</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="font-semibold text-slate-900">Send Notification</h3>
+                <p className="text-sm text-slate-500 mt-1">
                   Broadcast to all app subscribers
                 </p>
               </div>
-              <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              <Bell className="h-5 w-5 text-slate-400 group-hover:text-red-600 transition-colors" />
             </div>
           </Link>
 
           <Link 
             to="/admin/branch-admins"
-            className="bg-card rounded-xl p-6 border border-border hover:border-primary/50 transition-colors group"
+            className="bg-white rounded-xl p-6 border border-slate-200 hover:border-red-300 transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-semibold text-card-foreground">Manage Admins</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="font-semibold text-slate-900">Manage Admins</h3>
+                <p className="text-sm text-slate-500 mt-1">
                   Add or remove branch administrators
                 </p>
               </div>
-              <Users className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              <Users className="h-5 w-5 text-slate-400 group-hover:text-red-600 transition-colors" />
             </div>
           </Link>
         </div>
@@ -171,9 +171,9 @@ export default function AdminDashboard() {
 
       {/* Branch admin view */}
       {!isSuperAdmin && (
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <h2 className="font-semibold text-card-foreground mb-4">Your Assigned Branches</h2>
-          <p className="text-muted-foreground">
+        <div className="bg-white rounded-xl p-6 border border-slate-200">
+          <h2 className="font-semibold text-slate-900 mb-4">Your Assigned Branches</h2>
+          <p className="text-slate-600">
             You have access to manage {assignedBranchIds.length} branch(es).
           </p>
           <Button asChild className="mt-4">

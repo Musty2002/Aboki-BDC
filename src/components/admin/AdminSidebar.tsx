@@ -54,20 +54,20 @@ export function AdminSidebar({ isOpen, onClose, role, currentPath }: AdminSideba
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out",
+          "fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transform transition-transform duration-200 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0 lg:w-0 lg:overflow-hidden"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-16 flex items-center justify-between px-4 border-b border-border">
+          <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200">
             <Link to="/admin" className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/b3340903-a5ea-4ef8-9a20-1eb32d2ae3ed.png"
                 alt="Aboki"
                 className="h-8 w-auto"
               />
-              <span className="font-semibold text-card-foreground">Admin</span>
+              <span className="font-semibold text-slate-900">Admin</span>
             </Link>
             <Button 
               variant="ghost" 
@@ -86,15 +86,15 @@ export function AdminSidebar({ isOpen, onClose, role, currentPath }: AdminSideba
                 (item.path !== '/admin' && currentPath.startsWith(item.path));
               
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    isActive 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                      isActive 
+                        ? "bg-red-600 text-white" 
+                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    )}
                   onClick={() => window.innerWidth < 1024 && onClose()}
                 >
                   <item.icon className="h-5 w-5" />
@@ -105,12 +105,12 @@ export function AdminSidebar({ isOpen, onClose, role, currentPath }: AdminSideba
           </nav>
 
           {/* Role badge */}
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-slate-200">
             <div className={cn(
               "px-3 py-2 rounded-lg text-xs font-medium text-center",
               role === 'super_admin' 
-                ? "bg-primary/10 text-primary" 
-                : "bg-blue-500/10 text-blue-600"
+                ? "bg-red-50 text-red-600" 
+                : "bg-blue-50 text-blue-600"
             )}>
               {role === 'super_admin' ? 'Super Admin' : 'Branch Admin'}
             </div>

@@ -200,21 +200,22 @@ export default function AdminNotifications() {
       </div>
 
       {/* Compose form */}
-      <div className="bg-card rounded-xl border border-border p-6">
-        <h2 className="font-semibold text-card-foreground mb-4">Compose Notification</h2>
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h2 className="font-semibold text-slate-900 mb-4">Compose Notification</h2>
         <form onSubmit={handleSend} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title" className="text-slate-700">Title</Label>
             <Input
               id="title"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               placeholder="e.g., Rate Update Alert"
               maxLength={50}
+              className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="body">Message</Label>
+            <Label htmlFor="body" className="text-slate-700">Message</Label>
             <Textarea
               id="body"
               value={formData.body}
@@ -222,10 +223,11 @@ export default function AdminNotifications() {
               placeholder="e.g., USD rate has changed. Check the app for latest rates!"
               maxLength={200}
               rows={3}
+              className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
             />
           </div>
           <div className="space-y-2">
-            <Label>Target Audience</Label>
+            <Label className="text-slate-700">Target Audience</Label>
             <Select
               value={formData.targetType}
               onValueChange={(value) => setFormData(prev => ({ ...prev, targetType: value }))}
@@ -241,7 +243,7 @@ export default function AdminNotifications() {
           </div>
           {formData.targetType === 'city' && (
             <div className="space-y-2">
-              <Label>Select City</Label>
+              <Label className="text-slate-700">Select City</Label>
               <Select
                 value={formData.targetCityId}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, targetCityId: value }))}
@@ -288,27 +290,27 @@ export default function AdminNotifications() {
       </div>
 
       {/* History */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
-        <div className="p-4 border-b border-border">
-          <h2 className="font-semibold text-card-foreground">Notification History</h2>
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-200">
+          <h2 className="font-semibold text-slate-900">Notification History</h2>
         </div>
         {logs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Bell className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No notifications sent yet</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <Bell className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No notifications sent yet</h3>
+            <p className="text-sm text-slate-500 mt-1">
               Sent notifications will appear here
             </p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Target</TableHead>
-                <TableHead>Sent</TableHead>
-                <TableHead>Success</TableHead>
-                <TableHead>Date</TableHead>
+              <TableRow className="bg-slate-50">
+                <TableHead className="text-slate-700">Title</TableHead>
+                <TableHead className="text-slate-700">Target</TableHead>
+                <TableHead className="text-slate-700">Sent</TableHead>
+                <TableHead className="text-slate-700">Success</TableHead>
+                <TableHead className="text-slate-700">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -316,8 +318,8 @@ export default function AdminNotifications() {
                 <TableRow key={log.id}>
                   <TableCell>
                     <div>
-                      <p className="font-medium">{log.title}</p>
-                      <p className="text-xs text-muted-foreground truncate max-w-xs">
+                      <p className="font-medium text-slate-900">{log.title}</p>
+                      <p className="text-xs text-slate-500 truncate max-w-xs">
                         {log.body}
                       </p>
                     </div>
@@ -327,14 +329,14 @@ export default function AdminNotifications() {
                       {log.target_type === 'all' ? 'All' : log.city?.name || 'City'}
                     </Badge>
                   </TableCell>
-                  <TableCell>{log.sent_count}</TableCell>
+                  <TableCell className="text-slate-700">{log.sent_count}</TableCell>
                   <TableCell>
                     <span className="text-green-600">{log.success_count}</span>
                     {log.failure_count > 0 && (
-                      <span className="text-destructive"> / {log.failure_count} failed</span>
+                      <span className="text-red-600"> / {log.failure_count} failed</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-slate-500 text-sm">
                     {format(new Date(log.sent_at), 'MMM d, yyyy HH:mm')}
                   </TableCell>
                 </TableRow>

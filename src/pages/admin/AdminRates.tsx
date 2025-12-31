@@ -216,12 +216,12 @@ export default function AdminRates() {
       </div>
 
       {/* Rates Grid */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {branches.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <DollarSign className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No branches found</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <DollarSign className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No branches found</h3>
+            <p className="text-sm text-slate-500 mt-1">
               Add branches first to manage rates
             </p>
           </div>
@@ -229,10 +229,10 @@ export default function AdminRates() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="sticky left-0 bg-card">Branch</TableHead>
+                <TableRow className="bg-slate-50">
+                  <TableHead className="sticky left-0 bg-slate-50 text-slate-700">Branch</TableHead>
                   {filteredCurrencies.map(currency => (
-                    <TableHead key={currency.id} className="text-center min-w-[180px]">
+                    <TableHead key={currency.id} className="text-center min-w-[180px] text-slate-700">
                       <div className="flex items-center justify-center gap-2">
                         <img
                           src={currency.flag_url}
@@ -248,17 +248,17 @@ export default function AdminRates() {
               <TableBody>
                 {branches.map(branch => (
                   <TableRow key={branch.id}>
-                    <TableCell className="sticky left-0 bg-card font-medium">
+                    <TableCell className="sticky left-0 bg-white font-medium">
                       <div>
-                        <p>{branch.name}</p>
-                        <p className="text-xs text-muted-foreground">{branch.city?.name}</p>
+                        <p className="text-slate-900">{branch.name}</p>
+                        <p className="text-xs text-slate-500">{branch.city?.name}</p>
                       </div>
                     </TableCell>
                     {filteredCurrencies.map(currency => {
                       const rate = getRate(branch.id, currency.id);
                       if (!rate) {
                         return (
-                          <TableCell key={currency.id} className="text-center text-muted-foreground">
+                          <TableCell key={currency.id} className="text-center text-slate-400">
                             -
                           </TableCell>
                         );
@@ -272,23 +272,23 @@ export default function AdminRates() {
                         <TableCell key={currency.id}>
                           <div className="flex gap-2">
                             <div>
-                              <p className="text-xs text-muted-foreground mb-1">Buy</p>
+                              <p className="text-xs text-slate-500 mb-1">Buy</p>
                               <Input
                                 type="number"
                                 step="0.01"
                                 value={buyValue}
                                 onChange={(e) => handleRateChange(rate.id, 'buy_rate', e.target.value)}
-                                className="w-20 h-8 text-sm"
+                                className="w-20 h-8 text-sm bg-white border-slate-300 text-slate-900"
                               />
                             </div>
                             <div>
-                              <p className="text-xs text-muted-foreground mb-1">Sell</p>
+                              <p className="text-xs text-slate-500 mb-1">Sell</p>
                               <Input
                                 type="number"
                                 step="0.01"
                                 value={sellValue}
                                 onChange={(e) => handleRateChange(rate.id, 'sell_rate', e.target.value)}
-                                className="w-20 h-8 text-sm"
+                                className="w-20 h-8 text-sm bg-white border-slate-300 text-slate-900"
                               />
                             </div>
                           </div>
