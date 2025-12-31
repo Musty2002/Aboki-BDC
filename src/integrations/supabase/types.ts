@@ -14,6 +14,184 @@ export type Database = {
   }
   public: {
     Tables: {
+      branch_admins: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          branch_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          branch_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          branch_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_admins_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      branch_rates: {
+        Row: {
+          branch_id: string
+          buy_rate: number
+          currency_id: string
+          denomination: string | null
+          id: string
+          sell_rate: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          branch_id: string
+          buy_rate: number
+          currency_id: string
+          denomination?: string | null
+          id?: string
+          sell_rate: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          branch_id?: string
+          buy_rate?: number
+          currency_id?: string
+          denomination?: string | null
+          id?: string
+          sell_rate?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_rates_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_rates_currency_id_fkey"
+            columns: ["currency_id"]
+            isOneToOne: false
+            referencedRelation: "currencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      branches: {
+        Row: {
+          address: string
+          city_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          operating_hours: string
+          rating: number
+          review_count: number
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          address: string
+          city_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          operating_hours?: string
+          rating?: number
+          review_count?: number
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          address?: string
+          city_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          operating_hours?: string
+          rating?: number
+          review_count?: number
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branches_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cities: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
+      currencies: {
+        Row: {
+          code: string
+          created_at: string
+          flag_url: string
+          id: string
+          is_active: boolean
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag_url: string
+          id?: string
+          is_active?: boolean
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag_url?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
       news_cache: {
         Row: {
           articles: Json
@@ -32,6 +210,77 @@ export type Database = {
           created_at?: string
           fetched_at?: string
           id?: string
+        }
+        Relationships: []
+      }
+      notification_logs: {
+        Row: {
+          body: string
+          failure_count: number
+          id: string
+          sent_at: string
+          sent_by: string | null
+          sent_count: number
+          success_count: number
+          target_city_id: string | null
+          target_type: string
+          title: string
+        }
+        Insert: {
+          body: string
+          failure_count?: number
+          id?: string
+          sent_at?: string
+          sent_by?: string | null
+          sent_count?: number
+          success_count?: number
+          target_city_id?: string | null
+          target_type?: string
+          title: string
+        }
+        Update: {
+          body?: string
+          failure_count?: number
+          id?: string
+          sent_at?: string
+          sent_by?: string | null
+          sent_count?: number
+          success_count?: number
+          target_city_id?: string | null
+          target_type?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_target_city_id_fkey"
+            columns: ["target_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -106,15 +355,46 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_branch_admin: {
+        Args: { _branch_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "super_admin" | "branch_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -241,6 +521,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["super_admin", "branch_admin"],
+    },
   },
 } as const
