@@ -39,7 +39,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "abuja-wuse",
-        name: "Wuse Zone 4 Branch",
+        name: "Wuse Zone 4 Office",
         address: "Plot 123, Wuse Zone 4, Behind Sheraton Hotel, Abuja",
         city: "ABUJA",
         whatsappNumber: "2348012345678",
@@ -57,7 +57,7 @@ export const branchesData: CityData[] = [
       },
       {
         id: "abuja-garki",
-        name: "Garki Area 11 Branch",
+        name: "Garki Area 11 Office",
         address: "No. 45 Ahmadu Bello Way, Garki Area 11, Abuja",
         city: "ABUJA",
         whatsappNumber: "2348023456789",
@@ -73,7 +73,7 @@ export const branchesData: CityData[] = [
       },
       {
         id: "abuja-maitama",
-        name: "Maitama Branch",
+        name: "Maitama Office",
         address: "25 Aguiyi Ironsi Street, Maitama District, Abuja",
         city: "ABUJA",
         whatsappNumber: "2348034567890",
@@ -96,7 +96,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "lagos-vi",
-        name: "Victoria Island Branch",
+        name: "Victoria Island Office",
         address: "15 Adeola Odeku Street, Victoria Island, Lagos",
         city: "LAGOS",
         whatsappNumber: "2348045678901",
@@ -113,7 +113,7 @@ export const branchesData: CityData[] = [
       },
       {
         id: "lagos-ikeja",
-        name: "Ikeja GRA Branch",
+        name: "Ikeja GRA Office",
         address: "8 Isaac John Street, Ikeja GRA, Lagos",
         city: "LAGOS",
         whatsappNumber: "2348056789012",
@@ -128,7 +128,7 @@ export const branchesData: CityData[] = [
       },
       {
         id: "lagos-lekki",
-        name: "Lekki Phase 1 Branch",
+        name: "Lekki Phase 1 Office",
         address: "Plot 22, Admiralty Way, Lekki Phase 1, Lagos",
         city: "LAGOS",
         whatsappNumber: "2348067890123",
@@ -149,7 +149,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "ph-gra",
-        name: "GRA Phase 2 Branch",
+        name: "GRA Phase 2 Office",
         address: "45 Aba Road, GRA Phase 2, Port Harcourt",
         city: "PORT HARCOURT",
         whatsappNumber: "2348078901234",
@@ -165,7 +165,7 @@ export const branchesData: CityData[] = [
       },
       {
         id: "ph-trans-amadi",
-        name: "Trans Amadi Branch",
+        name: "Trans Amadi Office",
         address: "12 Trans Amadi Industrial Layout, Port Harcourt",
         city: "PORT HARCOURT",
         whatsappNumber: "2348089012345",
@@ -184,7 +184,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "kano-sabon-gari",
-        name: "Sabon Gari Branch",
+        name: "Sabon Gari Office",
         address: "23 Bompai Road, Sabon Gari, Kano",
         city: "KANO",
         whatsappNumber: "2348090123456",
@@ -204,7 +204,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "kaduna-barnawa",
-        name: "Barnawa Branch",
+        name: "Barnawa Office",
         address: "56 Ahmadu Bello Way, Barnawa, Kaduna",
         city: "KADUNA",
         whatsappNumber: "2348001234567",
@@ -223,7 +223,7 @@ export const branchesData: CityData[] = [
     branches: [
       {
         id: "bauchi-main",
-        name: "Bauchi Main Branch",
+        name: "Bauchi Main Office",
         address: "15 Jos Road, Bauchi Central, Bauchi",
         city: "BAUCHI",
         whatsappNumber: "2348012345679",
