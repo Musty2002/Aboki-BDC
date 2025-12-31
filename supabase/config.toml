@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.check-rate-alerts]
 verify_jwt = false
+
+[functions.fetch-cbn-rates]
+verify_jwt = false
