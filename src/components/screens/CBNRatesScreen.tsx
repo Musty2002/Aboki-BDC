@@ -122,6 +122,13 @@ const CBNRatesScreen = forwardRef<HTMLDivElement, CBNRatesScreenProps>(
 
     useEffect(() => {
       fetchRates();
+      
+      // Auto-refresh every 5 minutes
+      const interval = setInterval(() => {
+        fetchRates();
+      }, 5 * 60 * 1000);
+      
+      return () => clearInterval(interval);
     }, []);
 
     const handleRefresh = async () => {
