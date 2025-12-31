@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
-import { MapPin, Phone, Mail, Clock, MessageCircle, Facebook, Instagram, Twitter } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle, Facebook, Instagram, Twitter, Shield, Target, AlertCircle } from "lucide-react";
 import { AboutSkeleton } from "@/components/ui/LoadingSkeleton";
 
 const branches = [
@@ -40,12 +40,33 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
             </div>
             <div>
               <h2 className="font-bold text-card-foreground text-sm">Aboki Bureau De Change</h2>
-              <p className="text-[10px] text-muted-foreground">Licensed BDC Operator</p>
+              <p className="text-[10px] text-muted-foreground">CBN Licensed BDC Operator</p>
             </div>
           </div>
+        </div>
+
+        {/* Mission Statement */}
+        <div className="bg-card rounded-xl p-3 shadow-lg mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Target className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-card-foreground text-xs">Our Mission</h3>
+          </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Aboki Bureau De Change is a licensed and registered Bureau De Change operator in Nigeria. 
-            We provide reliable and competitive foreign exchange services across multiple locations nationwide.
+            At Aboki Bureau De Change, our mission is to empower individuals and businesses with accurate, 
+            up-to-date foreign exchange information—delivered in a safe, legal, and fully transparent manner.
+          </p>
+        </div>
+
+        {/* Compliance Statement */}
+        <div className="bg-card rounded-xl p-3 shadow-lg mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Shield className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-card-foreground text-xs">Regulatory Compliance</h3>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Aboki Bureau De Change operates in strict accordance with the Nigerian Foreign Exchange 
+            (Monitoring and Miscellaneous Provisions) Act and all applicable Central Bank of Nigeria (CBN) regulations. 
+            We are committed to upholding the highest standards of legal and ethical conduct in the foreign exchange industry.
           </p>
         </div>
 
@@ -72,7 +93,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
         </div>
 
         {/* Branch Locations */}
-        <h3 className="text-sm font-semibold text-foreground mb-2">Our Branches</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-2">Our Offices</h3>
         <div className="flex flex-col gap-2 mb-3">
           {branches.map((branch) => (
             <div key={branch.name} className="bg-card rounded-xl p-3 shadow-lg">
@@ -130,11 +151,33 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
           </button>
         </div>
 
-        {/* Disclaimer */}
-        <div className="bg-secondary/30 rounded-xl p-3 mt-3">
-          <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-            Aboki Bureau De Change is licensed by the Central Bank of Nigeria (CBN). 
-            All rates displayed are for informational purposes only and subject to change without notice.
+        {/* Legal Disclaimer */}
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3 mt-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-amber-800 dark:text-amber-400 text-[11px] mb-1">Important Disclaimer</h4>
+              <p className="text-[10px] text-amber-700 dark:text-amber-300 leading-relaxed">
+                This app does not facilitate the buying, selling, or transfer of foreign currency. All exchange rate data 
+                is sourced from publicly available financial information and CBN-licensed providers. While we strive for 
+                accuracy, we do not guarantee the completeness or correctness of rates displayed and accept no responsibility 
+                for financial decisions made based on this information.
+              </p>
+              <p className="text-[10px] text-amber-700 dark:text-amber-300 leading-relaxed mt-2">
+                All phone numbers listed in this app belong to entities fully licensed by the Central Bank of Nigeria (CBN) 
+                and are provided for informational purposes only.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-4">
+          <p className="text-[10px] text-muted-foreground">
+            © 2024 Aboki Bureau De Change. All rights reserved.
+          </p>
+          <p className="text-[9px] text-muted-foreground mt-1">
+            Licensed by the Central Bank of Nigeria
           </p>
         </div>
       </div>
