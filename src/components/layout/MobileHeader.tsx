@@ -1,4 +1,5 @@
 import { Bell, Menu } from "lucide-react";
+import abokiLogo from "@/assets/aboki-logo.jpg";
 
 interface MobileHeaderProps {
   onMenuClick?: () => void;
@@ -8,11 +9,18 @@ interface MobileHeaderProps {
 const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) => {
   return (
     <header className="bg-primary safe-top sticky top-0 z-50">
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="flex items-center justify-between px-4 py-2">
         {/* Logo/Brand */}
-        <h1 className="font-semibold text-sm text-primary-foreground tracking-tight whitespace-nowrap">
-          Aboki Bureau De Change
-        </h1>
+        <div className="flex items-center gap-2">
+          <img 
+            src={abokiLogo} 
+            alt="Aboki BDC" 
+            className="w-8 h-8 rounded-full object-cover"
+          />
+          <h1 className="font-semibold text-sm text-primary-foreground tracking-tight whitespace-nowrap">
+            Aboki BDC
+          </h1>
+        </div>
 
         {/* Action Icons */}
         <div className="flex items-center gap-3">
