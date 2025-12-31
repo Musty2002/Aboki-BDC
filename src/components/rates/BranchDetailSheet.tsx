@@ -171,7 +171,7 @@ const BranchDetailSheet = ({
                   </div>
                   {branch.currencies.map((currency, index) => (
                     <div
-                      key={currency.code}
+                      key={`${currency.code}-${currency.denomination || index}`}
                       className={`grid grid-cols-3 gap-1 px-2.5 py-2 items-center ${
                         index !== branch.currencies.length - 1 ? "border-b border-gray-100" : ""
                       }`}
@@ -182,9 +182,16 @@ const BranchDetailSheet = ({
                           alt={currency.code}
                           className="w-4 h-3 object-cover rounded-sm"
                         />
-                        <span className="text-xs font-medium text-gray-900">
-                          {currency.code}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-medium text-gray-900">
+                            {currency.code}
+                          </span>
+                          {currency.denomination && (
+                            <span className="text-[9px] text-gray-500">
+                              {currency.denomination}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="text-xs text-center text-green-600 font-semibold">
                         ₦{currency.buyRate.toLocaleString()}
