@@ -34,14 +34,11 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
       <div ref={ref} className="p-3 pb-6">
         {/* Company Info Card */}
         <div className="bg-card rounded-xl p-3 shadow-lg mb-3">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2">
             <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
               <span className="font-bold text-primary-foreground text-sm">A</span>
             </div>
-            <div>
-              <h2 className="font-bold text-card-foreground text-sm">Aboki Bureau De Change</h2>
-              <p className="text-[10px] text-muted-foreground">CBN Licensed BDC Operator</p>
-            </div>
+            <h2 className="font-bold text-card-foreground text-sm">Aboki Bureau De Change</h2>
           </div>
         </div>
 
@@ -51,7 +48,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
             <Target className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-card-foreground text-xs">Our Mission</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-foreground leading-relaxed">
             At Aboki Bureau De Change, our mission is to empower individuals and businesses with accurate, 
             up-to-date foreign exchange information—delivered in a safe, legal, and fully transparent manner.
           </p>
@@ -63,7 +60,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
             <Shield className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-card-foreground text-xs">Regulatory Compliance</h3>
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-xs text-foreground leading-relaxed">
             Aboki Bureau De Change operates in strict accordance with the Nigerian Foreign Exchange 
             (Monitoring and Miscellaneous Provisions) Act and all applicable Central Bank of Nigeria (CBN) regulations. 
             We are committed to upholding the highest standards of legal and ethical conduct in the foreign exchange industry.
