@@ -1,5 +1,5 @@
-import { useState, useEffect, forwardRef } from "react";
-import { Clock, ChevronRight, ExternalLink } from "lucide-react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import { Clock, ChevronRight, ExternalLink, RefreshCw } from "lucide-react";
 import { NewsSkeleton } from "@/components/ui/LoadingSkeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -38,18 +38,37 @@ const fallbackArticles: NewsArticle[] = [
   },
 ];
 
+export interface NewsScreenHandle {
+  refresh: () => Promise<void>;
+}
+
 interface NewsScreenProps {
   onRefresh?: () => Promise<void>;
 }
 
-const NewsScreen = forwardRef<HTMLDivElement, NewsScreenProps>(
+const NewsScreen = forwardRef<NewsScreenHandle, NewsScreenProps>(
   ({ onRefresh }, ref) => {
     const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [articles, setArticles] = useState<NewsArticle[]>([]);
+    const [isCached, setIsCached] = useState(false);
 
-    const fetchNews = async () => {
+    const fetchNews = async (forceRefresh = false) => {
       try {
-        const { data, error } = await supabase.functions.invoke('fetch-news');
+        const { data, error } = await supabase.functions.invoke('fetch-news', {
+          body: {},
+          headers: forceRefresh ? {} : undefined,
+        });
+
+        // Pass refresh param via URL workaround
+        if (forceRefresh) {
+          const { data: refreshData, error: refreshError } = await supabase.functions.invoke('fetch-news?refresh=true');
+          if (!refreshError && refreshData?.articles?.length > 0) {
+            setArticles(refreshData.articles);
+            setIsCached(false);
+            return;
+          }
+        }
         
         if (error) {
           console.error('Error fetching news:', error);
@@ -58,24 +77,44 @@ const NewsScreen = forwardRef<HTMLDivElement, NewsScreenProps>(
 
         if (data?.articles && data.articles.length > 0) {
           setArticles(data.articles);
+          setIsCached(data.cached || false);
         } else {
           setArticles(fallbackArticles);
+          setIsCached(false);
         }
       } catch (error) {
         console.error('Failed to fetch news:', error);
         setArticles(fallbackArticles);
+        setIsCached(false);
         toast({
           title: "Using cached news",
           description: "Couldn't fetch latest news. Showing recent articles.",
           duration: 3000,
         });
-      } finally {
-        setIsLoading(false);
       }
     };
 
+    const handleRefresh = async () => {
+      setIsRefreshing(true);
+      await fetchNews(true);
+      setIsRefreshing(false);
+      toast({
+        title: "News refreshed",
+        description: "Fetched latest forex news",
+        duration: 2000,
+      });
+    };
+
+    useImperativeHandle(ref, () => ({
+      refresh: handleRefresh,
+    }));
+
     useEffect(() => {
-      fetchNews();
+      const loadNews = async () => {
+        await fetchNews();
+        setIsLoading(false);
+      };
+      loadNews();
     }, []);
 
     const handleArticleClick = (article: NewsArticle) => {
@@ -92,7 +131,26 @@ const NewsScreen = forwardRef<HTMLDivElement, NewsScreenProps>(
     const otherArticles = articles.slice(1);
 
     return (
-      <div ref={ref} className="p-3 pb-6">
+      <div className="p-3 pb-6">
+        {/* Header with refresh button */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-foreground">Forex News</h2>
+            {isCached && (
+              <span className="px-1.5 py-0.5 bg-muted rounded text-[9px] text-muted-foreground">
+                Cached
+              </span>
+            )}
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="p-2 rounded-full bg-primary/10 text-primary ios-transition active:scale-95 disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+
         {/* Featured Article */}
         {featuredArticle && (
           <button

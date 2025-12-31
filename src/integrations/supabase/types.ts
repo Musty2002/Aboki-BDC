@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      news_cache: {
+        Row: {
+          articles: Json
+          created_at: string
+          fetched_at: string
+          id: string
+        }
+        Insert: {
+          articles?: Json
+          created_at?: string
+          fetched_at?: string
+          id?: string
+        }
+        Update: {
+          articles?: Json
+          created_at?: string
+          fetched_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
