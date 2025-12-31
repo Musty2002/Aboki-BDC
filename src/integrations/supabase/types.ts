@@ -14,7 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+        }
+        Relationships: []
+      }
+      rate_alerts: {
+        Row: {
+          alert_type: string
+          branch_id: string | null
+          branch_name: string | null
+          created_at: string
+          currency: string
+          enabled: boolean
+          id: string
+          subscription_id: string | null
+          target_rate: number
+          triggered_at: string | null
+        }
+        Insert: {
+          alert_type: string
+          branch_id?: string | null
+          branch_name?: string | null
+          created_at?: string
+          currency: string
+          enabled?: boolean
+          id?: string
+          subscription_id?: string | null
+          target_rate: number
+          triggered_at?: string | null
+        }
+        Update: {
+          alert_type?: string
+          branch_id?: string | null
+          branch_name?: string | null
+          created_at?: string
+          currency?: string
+          enabled?: boolean
+          id?: string
+          subscription_id?: string | null
+          target_rate?: number
+          triggered_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_alerts_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "push_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
