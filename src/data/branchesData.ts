@@ -3,6 +3,7 @@ export interface Currency {
   flag: string;
   buyRate: number;
   sellRate: number;
+  denomination?: string; // e.g., "$1", "$5,$10,$20", "$100+"
 }
 
 export interface Review {
@@ -47,7 +48,9 @@ export const branchesData: CityData[] = [
         rating: 4.5,
         reviewCount: 128,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1580, sellRate: 1620 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1580, sellRate: 1620, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1550, sellRate: 1620, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1560, sellRate: 1620, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1680, sellRate: 1720 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1950, sellRate: 2000 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1150, sellRate: 1180 },
@@ -65,7 +68,9 @@ export const branchesData: CityData[] = [
         rating: 4.2,
         reviewCount: 89,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1575, sellRate: 1615 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1575, sellRate: 1615, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1545, sellRate: 1615, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1555, sellRate: 1615, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1675, sellRate: 1715 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1945, sellRate: 1995 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1145, sellRate: 1175 },
@@ -81,7 +86,9 @@ export const branchesData: CityData[] = [
         rating: 4.8,
         reviewCount: 156,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1582, sellRate: 1622 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1582, sellRate: 1622, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1552, sellRate: 1622, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1562, sellRate: 1622, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1682, sellRate: 1722 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1952, sellRate: 2002 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1152, sellRate: 1182 },
@@ -104,7 +111,9 @@ export const branchesData: CityData[] = [
         rating: 4.6,
         reviewCount: 234,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1575, sellRate: 1615 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1575, sellRate: 1615, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1545, sellRate: 1615, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1555, sellRate: 1615, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1675, sellRate: 1715 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1945, sellRate: 1995 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1145, sellRate: 1175 },
@@ -121,7 +130,9 @@ export const branchesData: CityData[] = [
         rating: 4.3,
         reviewCount: 167,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1572, sellRate: 1612 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1572, sellRate: 1612, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1542, sellRate: 1612, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1552, sellRate: 1612, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1672, sellRate: 1712 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1942, sellRate: 1992 },
         ],
@@ -136,7 +147,9 @@ export const branchesData: CityData[] = [
         rating: 4.4,
         reviewCount: 145,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1578, sellRate: 1618 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1578, sellRate: 1618, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1548, sellRate: 1618, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1558, sellRate: 1618, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1678, sellRate: 1718 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1948, sellRate: 1998 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1148, sellRate: 1178 },
@@ -157,7 +170,9 @@ export const branchesData: CityData[] = [
         rating: 4.1,
         reviewCount: 78,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1570, sellRate: 1610 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1570, sellRate: 1610, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1540, sellRate: 1610, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1550, sellRate: 1610, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1670, sellRate: 1710 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1940, sellRate: 1990 },
           { code: "CAD", flag: "🇨🇦", buyRate: 1140, sellRate: 1170 },
@@ -173,7 +188,9 @@ export const branchesData: CityData[] = [
         rating: 3.9,
         reviewCount: 45,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1568, sellRate: 1608 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1568, sellRate: 1608, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1538, sellRate: 1608, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1548, sellRate: 1608, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1668, sellRate: 1708 },
         ],
       },
@@ -192,7 +209,9 @@ export const branchesData: CityData[] = [
         rating: 4.0,
         reviewCount: 56,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1585, sellRate: 1625 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1585, sellRate: 1625, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1555, sellRate: 1625, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1565, sellRate: 1625, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1685, sellRate: 1725 },
           { code: "GBP", flag: "🇬🇧", buyRate: 1955, sellRate: 2005 },
         ],
@@ -212,7 +231,9 @@ export const branchesData: CityData[] = [
         rating: 4.2,
         reviewCount: 34,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1582, sellRate: 1622 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1582, sellRate: 1622, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1552, sellRate: 1622, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1562, sellRate: 1622, denomination: "$5,$10,$20" },
           { code: "EUR", flag: "🇪🇺", buyRate: 1682, sellRate: 1722 },
         ],
       },
@@ -231,7 +252,9 @@ export const branchesData: CityData[] = [
         rating: 3.8,
         reviewCount: 23,
         currencies: [
-          { code: "USD", flag: "🇺🇸", buyRate: 1580, sellRate: 1620 },
+          { code: "USD", flag: "🇺🇸", buyRate: 1580, sellRate: 1620, denomination: "$100+" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1550, sellRate: 1620, denomination: "$1" },
+          { code: "USD", flag: "🇺🇸", buyRate: 1560, sellRate: 1620, denomination: "$5,$10,$20" },
         ],
       },
     ],

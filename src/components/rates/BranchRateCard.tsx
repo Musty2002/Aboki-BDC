@@ -7,6 +7,7 @@ interface Currency {
   flag: string;
   buyRate: number;
   sellRate: number;
+  denomination?: string;
 }
 
 interface BranchRateCardProps {
@@ -93,9 +94,9 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
           </div>
 
           {/* Currency Rows */}
-          {currencies.map((currency) => (
+          {currencies.map((currency, index) => (
             <div
-              key={currency.code}
+              key={`${currency.code}-${currency.denomination || index}`}
               className="flex items-center justify-between py-2 border-b border-border/50 last:border-0"
             >
               <div className="flex items-center gap-2">
@@ -104,7 +105,14 @@ const BranchRateCard = ({ branchName, currencies }: BranchRateCardProps) => {
                   alt={currency.code}
                   className="w-5 h-4 object-cover rounded-sm"
                 />
-                <span className="font-medium text-card-foreground text-xs">{currency.code}</span>
+                <div className="flex flex-col">
+                  <span className="font-medium text-card-foreground text-xs">{currency.code}</span>
+                  {currency.denomination && (
+                    <span className="text-[9px] text-muted-foreground">
+                      {currency.denomination}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex gap-6">
                 <span className="text-card-foreground font-semibold w-16 text-right text-xs">
