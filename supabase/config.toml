@@ -1,1 +1,7 @@
 project_id = "hqxatmvgzvlqxgciiepg"
+
+[functions.send-push-notification]
+verify_jwt = false
+
+[functions.check-rate-alerts]
+verify_jwt = false

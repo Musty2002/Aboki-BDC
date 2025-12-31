@@ -14,9 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, TrendingUp, TrendingDown } from "lucide-react";
+import { Bell, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { allCurrencies } from "@/data/branchesData";
-import { useRateAlerts, RateAlert } from "@/hooks/useRateAlerts";
+import { useRateAlerts } from "@/hooks/useRateAlerts";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 interface RateAlertModalProps {
   open: boolean;
@@ -36,13 +37,22 @@ const RateAlertModal = ({
   const [currency, setCurrency] = useState(defaultCurrency || "USD");
   const [alertType, setAlertType] = useState<"above" | "below">("above");
   const [targetRate, setTargetRate] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const { addAlert } = useRateAlerts();
+  const { isSupported, isRegistered, requestPermission } = usePushNotifications();
 
-  const handleSubmit = () => {
+  const handleEnableNotifications = async () => {
+    await requestPermission();
+  };
+
+  const handleSubmit = async () => {
     const rate = parseFloat(targetRate);
     if (isNaN(rate) || rate <= 0) return;
 
-    addAlert({
+    setIsSubmitting(true);
+    
+    const result = await addAlert({
       currency,
       targetRate: rate,
       type: alertType,
@@ -50,9 +60,15 @@ const RateAlertModal = ({
       branchName,
     });
 
-    setTargetRate("");
-    onOpenChange(false);
+    setIsSubmitting(false);
+
+    if (result) {
+      setTargetRate("");
+      onOpenChange(false);
+    }
   };
+
+  const showNotificationPrompt = !isRegistered;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -65,6 +81,35 @@ const RateAlertModal = ({
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
+          {/* Notification Permission Banner */}
+          {showNotificationPrompt && (
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                    Enable Push Notifications
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {isSupported 
+                      ? "Allow notifications to receive rate alerts" 
+                      : "Push notifications require the native mobile app"}
+                  </p>
+                  {isSupported && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-2 h-7 text-xs"
+                      onClick={handleEnableNotifications}
+                    >
+                      Enable Notifications
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Currency Select */}
           <div>
             <label className="text-sm text-muted-foreground mb-1.5 block">
@@ -132,11 +177,17 @@ const RateAlertModal = ({
           {/* Submit */}
           <Button
             onClick={handleSubmit}
-            disabled={!targetRate || parseFloat(targetRate) <= 0}
+            disabled={!targetRate || parseFloat(targetRate) <= 0 || !isRegistered || isSubmitting}
             className="w-full"
           >
-            Create Alert
+            {isSubmitting ? "Creating..." : "Create Alert"}
           </Button>
+          
+          {!isRegistered && (
+            <p className="text-xs text-center text-muted-foreground">
+              Enable notifications first to create alerts
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
