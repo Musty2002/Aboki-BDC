@@ -169,16 +169,16 @@ export default function AdminBranches() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Search branches..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
           />
         </div>
         <Select value={cityFilter} onValueChange={setCityFilter}>
-          <SelectTrigger className="w-full sm:w-48">
+          <SelectTrigger className="w-full sm:w-48 bg-white border-slate-300 text-slate-900">
             <SelectValue placeholder="All cities" />
           </SelectTrigger>
           <SelectContent>
@@ -193,12 +193,12 @@ export default function AdminBranches() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {filteredBranches.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No branches found</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <Building2 className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No branches found</h3>
+            <p className="text-sm text-slate-500 mt-1">
               {searchQuery || cityFilter !== 'all'
                 ? 'Try adjusting your filters'
                 : 'Get started by adding your first branch'
@@ -208,24 +208,24 @@ export default function AdminBranches() {
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Branch Name</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Status</TableHead>
+              <TableRow className="bg-slate-50">
+                <TableHead className="text-slate-700">Branch Name</TableHead>
+                <TableHead className="text-slate-700">City</TableHead>
+                <TableHead className="text-slate-700">Address</TableHead>
+                <TableHead className="text-slate-700">Rating</TableHead>
+                <TableHead className="text-slate-700">Status</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredBranches.map(branch => (
                 <TableRow key={branch.id}>
-                  <TableCell className="font-medium">{branch.name}</TableCell>
-                  <TableCell>{branch.city?.name || '-'}</TableCell>
-                  <TableCell className="max-w-xs truncate">{branch.address}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium text-slate-900">{branch.name}</TableCell>
+                  <TableCell className="text-slate-700">{branch.city?.name || '-'}</TableCell>
+                  <TableCell className="max-w-xs truncate text-slate-700">{branch.address}</TableCell>
+                  <TableCell className="text-slate-700">
                     <span className="text-amber-500">★</span> {branch.rating.toFixed(1)}
-                    <span className="text-muted-foreground text-xs ml-1">
+                    <span className="text-slate-500 text-xs ml-1">
                       ({branch.review_count})
                     </span>
                   </TableCell>

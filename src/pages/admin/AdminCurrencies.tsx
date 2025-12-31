@@ -332,24 +332,24 @@ export default function AdminCurrencies() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {currencies.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Coins className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No currencies found</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <Coins className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No currencies found</h3>
+            <p className="text-sm text-slate-500 mt-1">
               Get started by adding your first currency
             </p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Flag</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+              <TableRow className="bg-slate-50">
+                <TableHead className="text-slate-700">Flag</TableHead>
+                <TableHead className="text-slate-700">Code</TableHead>
+                <TableHead className="text-slate-700">Name</TableHead>
+                <TableHead className="text-slate-700">Status</TableHead>
+                <TableHead className="w-24 text-slate-700">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -365,8 +365,8 @@ export default function AdminCurrencies() {
                       }}
                     />
                   </TableCell>
-                  <TableCell className="font-mono font-medium">{currency.code}</TableCell>
-                  <TableCell>{currency.name}</TableCell>
+                  <TableCell className="font-mono font-medium text-slate-900">{currency.code}</TableCell>
+                  <TableCell className="text-slate-700">{currency.name}</TableCell>
                   <TableCell>
                     <Badge 
                       variant={currency.is_active ? 'default' : 'secondary'}

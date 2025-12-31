@@ -26,7 +26,10 @@ import { AdminProtectedRoute } from "./components/admin/AdminProtectedRoute";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    // Don't show splash on admin routes
+    return !window.location.pathname.startsWith('/admin');
+  });
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);

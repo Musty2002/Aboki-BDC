@@ -323,22 +323,22 @@ export default function AdminBranchAdmins() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         {admins.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="font-semibold text-card-foreground">No branch admins yet</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <Users className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-slate-900">No branch admins yet</h3>
+            <p className="text-sm text-slate-500 mt-1">
               Invite branch admins to manage their locations
             </p>
           </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Admin</TableHead>
-                <TableHead>Assigned Branch</TableHead>
-                <TableHead>Assigned Date</TableHead>
+              <TableRow className="bg-slate-50">
+                <TableHead className="text-slate-700">Admin</TableHead>
+                <TableHead className="text-slate-700">Assigned Branch</TableHead>
+                <TableHead className="text-slate-700">Assigned Date</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -347,23 +347,23 @@ export default function AdminBranchAdmins() {
                 <TableRow key={admin.id}>
                   <TableCell>
                     <div>
-                      <p className="font-medium">
+                      <p className="font-medium text-slate-900">
                         {admin.profile?.full_name || 'Unknown'}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-slate-500">
                         {admin.profile?.email}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="font-medium">{admin.branch?.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-slate-900">{admin.branch?.name}</p>
+                      <p className="text-sm text-slate-500">
                         {admin.branch?.city?.name}
                       </p>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="text-slate-500 text-sm">
                     {format(new Date(admin.assigned_at), 'MMM d, yyyy')}
                   </TableCell>
                   <TableCell>
