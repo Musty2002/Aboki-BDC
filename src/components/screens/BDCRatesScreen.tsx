@@ -1,11 +1,12 @@
-import { useState, useEffect, forwardRef } from "react";
+import { useState, useEffect, forwardRef, useCallback } from "react";
 import { Bell } from "lucide-react";
-import { branchesData, Branch, CityData } from "@/data/branchesData";
+import { Branch, CityData } from "@/data/branchesData";
 import CityCard from "@/components/rates/CityCard";
 import BranchDetailSheet from "@/components/rates/BranchDetailSheet";
 import RateAlertModal from "@/components/rates/RateAlertModal";
 import { RateCardSkeleton } from "@/components/ui/LoadingSkeleton";
 import { useRateAlerts } from "@/hooks/useRateAlerts";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BDCRatesScreenProps {
   onRefresh?: () => Promise<void>;
@@ -14,19 +15,101 @@ interface BDCRatesScreenProps {
 const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
   ({ onRefresh }, ref) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [data, setData] = useState<CityData[]>(branchesData);
+    const [data, setData] = useState<CityData[]>([]);
     const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
     const [showBranchDetail, setShowBranchDetail] = useState(false);
     const [showRateAlert, setShowRateAlert] = useState(false);
 
     const { alerts } = useRateAlerts();
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
+    const fetchBranches = useCallback(async () => {
+      try {
+        // Fetch cities with their branches and rates
+        const { data: cities, error: citiesError } = await supabase
+          .from('cities')
+          .select('id, name')
+          .eq('is_active', true)
+          .order('name');
+
+        if (citiesError) throw citiesError;
+
+        const { data: branches, error: branchesError } = await supabase
+          .from('branches')
+          .select(`
+            id,
+            name,
+            address,
+            city_id,
+            whatsapp_number,
+            operating_hours,
+            rating,
+            review_count
+          `)
+          .eq('is_active', true);
+
+        if (branchesError) throw branchesError;
+
+        const { data: rates, error: ratesError } = await supabase
+          .from('branch_rates')
+          .select(`
+            branch_id,
+            currency_id,
+            denomination,
+            buy_rate,
+            sell_rate,
+            currencies (code, name, flag_url)
+          `);
+
+        if (ratesError) throw ratesError;
+
+        const { data: currencies, error: currenciesError } = await supabase
+          .from('currencies')
+          .select('id, code, name, flag_url')
+          .eq('is_active', true);
+
+        if (currenciesError) throw currenciesError;
+
+        // Transform data to match CityData format
+        const cityData: CityData[] = (cities || []).map(city => {
+          const cityBranches = (branches || []).filter(b => b.city_id === city.id);
+          
+          return {
+            city: city.name,
+            branches: cityBranches.map(branch => {
+              const branchRates = (rates || []).filter(r => r.branch_id === branch.id);
+              
+              return {
+                id: branch.id,
+                name: branch.name,
+                address: branch.address,
+                city: city.name,
+                whatsappNumber: branch.whatsapp_number || '',
+                operatingHours: branch.operating_hours,
+                rating: branch.rating,
+                reviewCount: branch.review_count,
+                currencies: branchRates.map(rate => ({
+                  code: (rate.currencies as any)?.code || '',
+                  flag: (rate.currencies as any)?.flag_url || '',
+                  buyRate: rate.buy_rate,
+                  sellRate: rate.sell_rate,
+                  denomination: rate.denomination || undefined,
+                })),
+              };
+            }),
+          };
+        }).filter(city => city.branches.length > 0);
+
+        setData(cityData);
+      } catch (error) {
+        console.error('Error fetching branches:', error);
+      } finally {
         setIsLoading(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+      }
     }, []);
+
+    useEffect(() => {
+      fetchBranches();
+    }, [fetchBranches]);
 
     const handleBranchSelect = (branch: Branch) => {
       setSelectedBranch(branch);
