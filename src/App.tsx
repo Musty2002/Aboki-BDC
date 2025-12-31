@@ -19,6 +19,7 @@ import AdminRates from "./pages/admin/AdminRates";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminBranchAdmins from "./pages/admin/AdminBranchAdmins";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminSetup from "./pages/admin/AdminSetup";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminProtectedRoute } from "./components/admin/AdminProtectedRoute";
 
@@ -42,6 +43,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             
             {/* Admin routes */}
+            <Route path="/admin/setup" element={<AdminSetup />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={
               <AdminProtectedRoute>

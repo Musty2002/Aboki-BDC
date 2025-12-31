@@ -29,3 +29,9 @@ verify_jwt = false
 
 [functions.fetch-news]
 verify_jwt = false
+
+[functions.setup-admin]
+verify_jwt = false
+
+[functions.seed-branches]
+verify_jwt = false
