@@ -1,7 +1,19 @@
 project_id = "hqxatmvgzvlqxgciiepg"
 
-[functions.send-push-notification]
-verify_jwt = false
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
 
 [functions.check-rate-alerts]
 verify_jwt = false
@@ -10,4 +22,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.health-check]
+verify_jwt = false
+
+[functions.send-push-notification]
+verify_jwt = false
+
+[functions.fetch-news]
 verify_jwt = false
