@@ -8,6 +8,181 @@ const corsHeaders = {
 
 const CACHE_DURATION_MINUTES = 30;
 
+interface NewsArticle {
+  id: number;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  url: string | null;
+  source: string;
+  image: string | null;
+}
+
+// Fetch from MediaStack API
+async function fetchMediaStack(): Promise<NewsArticle[]> {
+  const MEDIASTACK_API_KEY = Deno.env.get('MEDIASTACK_API_KEY');
+  if (!MEDIASTACK_API_KEY) {
+    console.log('MediaStack API key not configured, skipping...');
+    return [];
+  }
+
+  try {
+    const apiUrl = new URL('http://api.mediastack.com/v1/news');
+    apiUrl.searchParams.set('access_key', MEDIASTACK_API_KEY);
+    apiUrl.searchParams.set('countries', 'ng');
+    apiUrl.searchParams.set('categories', 'business');
+    apiUrl.searchParams.set('keywords', 'forex,naira,dollar,exchange,currency,CBN');
+    apiUrl.searchParams.set('limit', '10');
+    apiUrl.searchParams.set('sort', 'published_desc');
+
+    console.log('Fetching from MediaStack...');
+    const response = await fetch(apiUrl.toString());
+
+    if (!response.ok) {
+      console.error('MediaStack API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log(`MediaStack returned ${data.data?.length || 0} articles`);
+
+    return (data.data || []).map((article: any, index: number) => ({
+      id: index + 1,
+      title: article.title || 'Untitled',
+      excerpt: article.description || article.title || '',
+      date: article.published_at ? new Date(article.published_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) : 'Recent',
+      category: article.category || 'Business',
+      url: article.url || null,
+      source: article.source || 'MediaStack',
+      image: article.image || null,
+    }));
+  } catch (error) {
+    console.error('MediaStack fetch error:', error);
+    return [];
+  }
+}
+
+// Fetch from NewsAPI.org
+async function fetchNewsAPI(): Promise<NewsArticle[]> {
+  const NEWSAPI_KEY = Deno.env.get('NEWSAPI_ORG_KEY');
+  if (!NEWSAPI_KEY) {
+    console.log('NewsAPI.org key not configured, skipping...');
+    return [];
+  }
+
+  try {
+    const apiUrl = new URL('https://newsapi.org/v2/everything');
+    apiUrl.searchParams.set('q', 'nigeria naira forex exchange rate CBN dollar');
+    apiUrl.searchParams.set('language', 'en');
+    apiUrl.searchParams.set('sortBy', 'publishedAt');
+    apiUrl.searchParams.set('pageSize', '10');
+    apiUrl.searchParams.set('apiKey', NEWSAPI_KEY);
+
+    console.log('Fetching from NewsAPI.org...');
+    const response = await fetch(apiUrl.toString());
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('NewsAPI error:', response.status, errorText);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log(`NewsAPI returned ${data.articles?.length || 0} articles`);
+
+    return (data.articles || []).map((article: any, index: number) => ({
+      id: 100 + index,
+      title: article.title || 'Untitled',
+      excerpt: article.description || article.content || '',
+      date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) : 'Recent',
+      category: 'Finance',
+      url: article.url || null,
+      source: article.source?.name || 'NewsAPI',
+      image: article.urlToImage || null,
+    }));
+  } catch (error) {
+    console.error('NewsAPI fetch error:', error);
+    return [];
+  }
+}
+
+// Fetch from AmeerAI API
+async function fetchAmeerAI(): Promise<NewsArticle[]> {
+  const AMEER_API_KEY = Deno.env.get('AMEER_AI_API_KEY');
+  if (!AMEER_API_KEY) {
+    console.log('AmeerAI API key not configured, skipping...');
+    return [];
+  }
+
+  try {
+    const apiUrl = 'https://api.ameerai.com/v1/api/backends/api-services/news/threads?thread_class=business&page=1&limit=10';
+
+    console.log('Fetching from AmeerAI...');
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${AMEER_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('AmeerAI API error:', response.status, errorText);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log(`AmeerAI returned ${data.data?.length || data.threads?.length || 0} articles`);
+
+    // Handle different response formats from AmeerAI
+    const articles = data.data || data.threads || data.results || [];
+    
+    return articles.map((article: any, index: number) => ({
+      id: 200 + index,
+      title: article.title || article.headline || 'Untitled',
+      excerpt: article.summary || article.description || article.content?.substring(0, 200) || '',
+      date: article.published_at || article.created_at 
+        ? new Date(article.published_at || article.created_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) 
+        : 'Recent',
+      category: article.category || article.thread_class || 'Business',
+      url: article.url || article.link || null,
+      source: article.source || 'AmeerAI',
+      image: article.image || article.thumbnail || article.image_url || null,
+    }));
+  } catch (error) {
+    console.error('AmeerAI fetch error:', error);
+    return [];
+  }
+}
+
+// Deduplicate articles by title similarity
+function deduplicateArticles(articles: NewsArticle[]): NewsArticle[] {
+  const seen = new Set<string>();
+  return articles.filter(article => {
+    // Normalize title for comparison
+    const normalizedTitle = article.title.toLowerCase().replace(/[^\w\s]/g, '').trim();
+    if (seen.has(normalizedTitle)) {
+      return false;
+    }
+    seen.add(normalizedTitle);
+    return true;
+  });
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -42,50 +217,28 @@ serve(async (req) => {
       }
     }
 
-    // Fetch fresh news
-    const MEDIASTACK_API_KEY = Deno.env.get('MEDIASTACK_API_KEY');
+    // Fetch from all sources in parallel
+    console.log('Fetching fresh news from all sources...');
+    const [mediaStackArticles, newsAPIArticles, ameerAIArticles] = await Promise.all([
+      fetchMediaStack(),
+      fetchNewsAPI(),
+      fetchAmeerAI(),
+    ]);
+
+    // Combine all articles
+    const allArticles = [...mediaStackArticles, ...newsAPIArticles, ...ameerAIArticles];
+    console.log(`Total articles from all sources: ${allArticles.length}`);
+
+    // Deduplicate and sort by date
+    let articles = deduplicateArticles(allArticles);
     
-    if (!MEDIASTACK_API_KEY) {
-      console.error('MEDIASTACK_API_KEY is not configured');
-      throw new Error('News API key not configured');
-    }
-
-    const apiUrl = new URL('http://api.mediastack.com/v1/news');
-    apiUrl.searchParams.set('access_key', MEDIASTACK_API_KEY);
-    apiUrl.searchParams.set('countries', 'ng');
-    apiUrl.searchParams.set('categories', 'business');
-    apiUrl.searchParams.set('keywords', 'forex,naira,dollar,exchange,currency,CBN');
-    apiUrl.searchParams.set('limit', '10');
-    apiUrl.searchParams.set('sort', 'published_desc');
-
-    console.log('Fetching fresh news from MediaStack...');
-    
-    const response = await fetch(apiUrl.toString());
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('MediaStack API error:', response.status, errorText);
-      throw new Error(`News API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log(`Fetched ${data.data?.length || 0} news articles`);
-
-    // Transform to simpler format
-    const articles = (data.data || []).map((article: any, index: number) => ({
+    // Re-assign IDs after deduplication
+    articles = articles.map((article, index) => ({
+      ...article,
       id: index + 1,
-      title: article.title || 'Untitled',
-      excerpt: article.description || article.title || '',
-      date: article.published_at ? new Date(article.published_at).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      }) : 'Recent',
-      category: article.category || 'Business',
-      url: article.url || null,
-      source: article.source || 'News',
-      image: article.image || null,
     }));
+
+    console.log(`After deduplication: ${articles.length} articles`);
 
     // Save to cache (only if we got articles)
     if (articles.length > 0) {
