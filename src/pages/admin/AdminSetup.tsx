@@ -103,9 +103,11 @@ export default function AdminSetup() {
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="h-16 w-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-              <Shield className="h-8 w-8 text-red-600" />
-            </div>
+            <img 
+              src="/favicon.jpg"
+              alt="Aboki"
+              className="h-12 w-auto mx-auto mb-4"
+            />
             <h1 className="text-2xl font-bold text-slate-900">Admin Setup</h1>
             <p className="text-sm text-slate-600 mt-1">
               Initialize your admin account and seed data

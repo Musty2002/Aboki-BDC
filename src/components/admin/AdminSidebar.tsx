@@ -63,7 +63,7 @@ export function AdminSidebar({ isOpen, onClose, role, currentPath }: AdminSideba
           <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200">
             <Link to="/admin" className="flex items-center gap-2">
               <img 
-                src="/lovable-uploads/b3340903-a5ea-4ef8-9a20-1eb32d2ae3ed.png"
+                src="/favicon.jpg"
                 alt="Aboki"
                 className="h-8 w-auto"
               />

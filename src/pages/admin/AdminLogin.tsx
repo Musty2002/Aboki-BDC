@@ -88,7 +88,7 @@ export default function AdminLogin() {
           {/* Logo */}
           <div className="text-center mb-8">
             <img 
-              src="/lovable-uploads/b3340903-a5ea-4ef8-9a20-1eb32d2ae3ed.png"
+              src="/favicon.jpg"
               alt="Aboki"
               className="h-12 w-auto mx-auto mb-4"
             />
