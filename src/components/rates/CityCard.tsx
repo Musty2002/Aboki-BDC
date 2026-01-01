@@ -21,9 +21,14 @@ const CityCard = ({ cityData, onBranchSelect }: CityCardProps) => {
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
             <MapPin className="w-4 h-4 text-primary" />
           </div>
-          <h3 className="font-semibold text-card-foreground text-sm">
-            {cityData.city} Rate
-          </h3>
+          <div className="flex flex-col items-start">
+            <h3 className="font-semibold text-card-foreground text-sm">
+              {cityData.city} Rate
+            </h3>
+            <span className="text-xs text-red-500 font-medium">
+              {cityData.branches.length} {cityData.branches.length === 1 ? 'office' : 'offices'}
+            </span>
+          </div>
         </div>
         <ChevronRight 
           className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
