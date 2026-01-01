@@ -9,11 +9,16 @@ import AboutScreen from "@/components/screens/AboutScreen";
 import PullToRefresh from "@/components/ui/PullToRefresh";
 import { usePullToRefresh } from "@/hooks/usePullToRefresh";
 import { toast } from "@/hooks/use-toast";
+import { SidebarDrawer } from "@/components/layout/SidebarDrawer";
+import { NotificationPanel } from "@/components/layout/NotificationPanel";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>("bdc-rates");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const { unreadCount } = useNotifications();
 
   const handleRefresh = useCallback(async () => {
     // Simulate refresh delay
@@ -51,9 +56,16 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col max-w-md mx-auto">
       {/* Fixed Header */}
       <MobileHeader
-        onMenuClick={() => setMenuOpen(!menuOpen)}
-        onNotificationClick={() => {}}
+        onMenuClick={() => setSidebarOpen(true)}
+        onNotificationClick={() => setNotificationOpen(true)}
+        unreadCount={unreadCount}
       />
+
+      {/* Sidebar Drawer */}
+      <SidebarDrawer open={sidebarOpen} onOpenChange={setSidebarOpen} />
+
+      {/* Notification Panel */}
+      <NotificationPanel open={notificationOpen} onOpenChange={setNotificationOpen} />
 
       {/* Tab Navigation */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />

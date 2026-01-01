@@ -4,9 +4,10 @@ import abokiLogo from "@/assets/aboki-logo.jpg";
 interface MobileHeaderProps {
   onMenuClick?: () => void;
   onNotificationClick?: () => void;
+  unreadCount?: number;
 }
 
-const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) => {
+const MobileHeader = ({ onMenuClick, onNotificationClick, unreadCount = 0 }: MobileHeaderProps) => {
   return (
     <header className="bg-primary safe-top sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 py-2">
@@ -26,10 +27,15 @@ const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) =
         <div className="flex items-center gap-3">
           <button
             onClick={onNotificationClick}
-            className="touch-target flex items-center justify-center text-primary-foreground hover:opacity-80 ios-transition"
+            className="touch-target flex items-center justify-center text-primary-foreground hover:opacity-80 ios-transition relative"
             aria-label="Notifications"
           >
             <Bell className="w-6 h-6" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
           <button
             onClick={onMenuClick}
