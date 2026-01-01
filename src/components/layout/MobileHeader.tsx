@@ -18,7 +18,7 @@ const MobileHeader = ({ onMenuClick, onNotificationClick }: MobileHeaderProps) =
             className="w-8 h-8 rounded-full object-cover"
           />
           <h1 className="font-semibold text-sm text-primary-foreground tracking-tight whitespace-nowrap">
-            Aboki BDC
+            Aboki Bureau De Change
           </h1>
         </div>
 
