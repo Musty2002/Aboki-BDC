@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { SidebarDrawer } from "@/components/layout/SidebarDrawer";
 import { NotificationPanel } from "@/components/layout/NotificationPanel";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useNativeFeatures } from "@/hooks/useNativeFeatures";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>("bdc-rates");
@@ -19,6 +20,7 @@ const Index = () => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const { unreadCount } = useNotifications();
+  const { triggerHaptic } = useNativeFeatures();
 
   const handleRefresh = useCallback(async () => {
     // Simulate refresh delay
