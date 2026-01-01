@@ -1,73 +1,102 @@
-# Welcome to your Lovable project
+# Aboki BDC - Currency Exchange Rate App
 
-## Project info
+A comprehensive mobile-first currency exchange rate application for Nigerian Bureau de Change (BDC) operators and users.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- **Live BDC Rates**: Real-time exchange rates from multiple BDC branches across Nigeria
+- **CBN Rates**: Official Central Bank of Nigeria exchange rates
+- **Currency Converter**: Quick and easy currency conversion tool
+- **News Feed**: Latest financial news from multiple sources (MediaStack, NewsAPI, AmeerAI)
+- **Rate Alerts**: Set custom alerts for target exchange rates
+- **Push Notifications**: Real-time notifications for rate changes
+- **Admin Dashboard**: Manage branches, rates, cities, and currencies
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui
+- **Backend**: Supabase (PostgreSQL, Edge Functions, Auth)
+- **Mobile**: Capacitor (iOS & Android support)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ & npm
+- Git
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd aboki-bdc
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Create a `.env` file with:
 
-**Use GitHub Codespaces**
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Mobile Development
 
-## What technologies are used for this project?
+### iOS
 
-This project is built with:
+```bash
+npx cap add ios
+npx cap sync
+npx cap open ios
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Android
 
-## How can I deploy this project?
+```bash
+npx cap add android
+npx cap sync
+npx cap open android
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Project Structure
 
-## Can I connect a custom domain to my Lovable project?
+```
+├── src/
+│   ├── components/     # React components
+│   ├── pages/          # Page components
+│   ├── hooks/          # Custom React hooks
+│   ├── integrations/   # Supabase client
+│   └── data/           # Static data
+├── supabase/
+│   ├── functions/      # Edge functions
+│   └── config.toml     # Supabase config
+└── public/             # Static assets
+```
 
-Yes, you can!
+## Admin Access
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Navigate to `/admin/setup` for initial setup
+2. Enter the setup key (contact administrator)
+3. Create your admin account
+4. Access dashboard at `/admin`
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## API Integrations
+
+- **MediaStack**: Financial news
+- **NewsAPI.org**: Global news coverage
+- **AmeerAI**: AI-powered news aggregation
+
+## License
+
+MIT License - see LICENSE file for details
