@@ -126,7 +126,7 @@ export default function AdminSetup() {
                 className="bg-white border-slate-300 text-slate-900 placeholder:text-slate-400"
               />
               <p className="text-xs text-slate-500">
-                Default: aboki-admin-setup-2024
+                Contact system administrator for setup key
               </p>
             </div>
 
