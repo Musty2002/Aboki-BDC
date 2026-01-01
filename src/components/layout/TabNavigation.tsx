@@ -8,7 +8,7 @@ interface TabNavigationProps {
 }
 
 const tabs: { id: TabType; label: string }[] = [
-  { id: "bdc-rates", label: "BDC/Rates" },
+  { id: "bdc-rates", label: "Bureau De Change" },
   { id: "cbn-rates", label: "CBN Rates" },
   { id: "converter", label: "Converter" },
   { id: "news", label: "News" },
