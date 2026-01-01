@@ -192,6 +192,36 @@ export type Database = {
         }
         Relationships: []
       }
+      health_check_logs: {
+        Row: {
+          alerts_count: number | null
+          checked_at: string
+          db_connected: boolean
+          id: string
+          response_time_ms: number | null
+          source: string | null
+          status: string
+        }
+        Insert: {
+          alerts_count?: number | null
+          checked_at?: string
+          db_connected?: boolean
+          id?: string
+          response_time_ms?: number | null
+          source?: string | null
+          status: string
+        }
+        Update: {
+          alerts_count?: number | null
+          checked_at?: string
+          db_connected?: boolean
+          id?: string
+          response_time_ms?: number | null
+          source?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       news_cache: {
         Row: {
           articles: Json
