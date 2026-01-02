@@ -24,7 +24,7 @@ const TabNavigation = ({ activeTab, onTabChange }: TabNavigationProps) => {
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "touch-target px-3 py-2.5 text-xs font-medium whitespace-nowrap ios-transition relative",
+              "touch-target px-3 py-2.5 text-sm font-medium whitespace-nowrap ios-transition relative",
               activeTab === tab.id
                 ? "text-primary-foreground"
                 : "text-primary-foreground/70 hover:text-primary-foreground/90"

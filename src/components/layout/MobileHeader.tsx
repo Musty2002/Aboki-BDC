@@ -18,7 +18,7 @@ const MobileHeader = ({ onMenuClick, onNotificationClick, unreadCount = 0 }: Mob
             alt="Aboki BDC" 
             className="w-8 h-8 rounded-full object-cover"
           />
-          <h1 className="font-semibold text-sm text-primary-foreground tracking-tight whitespace-nowrap">
+          <h1 className="font-semibold text-base text-primary-foreground tracking-tight whitespace-nowrap">
             Aboki Bureau De Change
           </h1>
         </div>
