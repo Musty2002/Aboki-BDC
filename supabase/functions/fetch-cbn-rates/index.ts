@@ -27,18 +27,8 @@ const currencyInfo: Record<string, string> = {
   'AED': 'UAE Dirham',
 };
 
-// Approximate cross rates against USD (these are typical market rates)
-const crossRates: Record<string, number> = {
-  'EUR': 1.08,
-  'GBP': 1.27,
-  'CHF': 0.88,
-  'CAD': 0.74,
-  'AUD': 0.65,
-  'JPY': 0.0067,
-  'CNY': 0.14,
-  'ZAR': 0.055,
-  'AED': 0.27,
-};
+// Currencies we want to display
+const targetCurrencies = ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD', 'JPY', 'CNY', 'ZAR', 'AED'];
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -46,137 +36,107 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Fetching CBN exchange rates...');
-
-    // Try multiple CBN URLs
-    const urls = [
-      'https://www.cbn.gov.ng/rates/ExchRateByCurrency.html',
-      'https://www.cbn.gov.ng/rates/exchratebycurrency.asp',
-      'https://www.cbn.gov.ng/rates/',
-    ];
-
-    let html = '';
-    let fetchSuccess = false;
-
-    for (const url of urls) {
-      try {
-        console.log(`Trying URL: ${url}`);
-        const response = await fetch(url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-          },
-        });
-
-        if (response.ok) {
-          html = await response.text();
-          console.log(`Successfully fetched from ${url}, got ${html.length} bytes`);
-          fetchSuccess = true;
-          break;
-        } else {
-          console.log(`URL ${url} returned status ${response.status}`);
-        }
-      } catch (urlError) {
-        console.log(`Failed to fetch ${url}:`, urlError);
-      }
+    console.log('Fetching exchange rates from ExchangeRate-API...');
+    
+    const apiKey = Deno.env.get('EXCHANGERATE_API_KEY');
+    
+    if (!apiKey) {
+      console.error('EXCHANGERATE_API_KEY not configured');
+      throw new Error('API key not configured');
     }
 
-    let usdRate = 1550; // Default fallback
-    let latestRate = null;
+    // Fetch rates from ExchangeRate-API (NGN as base to get how much 1 foreign currency = X NGN)
+    // We need to fetch USD as base and then convert
+    const response = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`, {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
 
-    if (fetchSuccess && html.length > 0) {
-      // Try to parse NFEM rate from the HTML
-      // Look for patterns like: 1,445.6828 or 1445.68
-      const nfemPatterns = [
-        /NFEM\s*RATE[^0-9]*([\d,]+\.?\d*)/i,
-        /(\d{1},?\d{3}\.?\d{0,4})\s*\|/g,
-        /₦\/US\$[^0-9]*([\d,]+\.?\d*)/i,
-        /December[^0-9]*([\d,]+\.?\d*)/i,
-      ];
-
-      for (const pattern of nfemPatterns) {
-        const match = html.match(pattern);
-        if (match && match[1]) {
-          const parsed = parseFloat(match[1].replace(/,/g, ''));
-          if (parsed > 1000 && parsed < 5000) { // Reasonable NGN/USD range
-            usdRate = parsed;
-            console.log(`Found rate: ${usdRate} using pattern: ${pattern}`);
-            break;
-          }
-        }
-      }
-
-      // Try to extract date
-      const dateMatch = html.match(/(December|January|November|October)-(\d{1,2})-(\d{4})/i);
-      if (dateMatch) {
-        latestRate = {
-          date: dateMatch[0],
-          nfemRate: usdRate,
-          highestRate: usdRate * 1.005,
-          lowestRate: usdRate * 0.995,
-          closingRate: usdRate,
-          averageRate: usdRate,
-        };
-      }
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('ExchangeRate-API error:', response.status, errorText);
+      throw new Error(`API returned ${response.status}`);
     }
+
+    const data = await response.json();
+    console.log('ExchangeRate-API response result:', data.result);
+
+    if (data.result !== 'success') {
+      console.error('API returned error:', data['error-type']);
+      throw new Error(data['error-type'] || 'API error');
+    }
+
+    const rates = data.conversion_rates;
+    const ngnPerUsd = rates.NGN; // How many NGN per 1 USD
+    
+    console.log(`NGN per USD: ${ngnPerUsd}`);
 
     // Build currency list
-    const currencies: CurrencyRate[] = [
-      {
-        code: 'USD',
-        name: 'US Dollar',
-        buyingRate: usdRate * 0.995,
-        centralRate: usdRate,
-        sellingRate: usdRate * 1.005,
-      },
-    ];
-
-    // Add other currencies based on cross rates
-    for (const [code, multiplier] of Object.entries(crossRates)) {
-      const rate = usdRate * multiplier;
-      currencies.push({
-        code,
-        name: currencyInfo[code] || code,
-        buyingRate: rate * 0.995,
-        centralRate: rate,
-        sellingRate: rate * 1.005,
-      });
+    const currencies: CurrencyRate[] = [];
+    
+    for (const code of targetCurrencies) {
+      if (code === 'USD') {
+        // USD rate is direct
+        currencies.push({
+          code: 'USD',
+          name: currencyInfo['USD'],
+          buyingRate: ngnPerUsd * 0.995, // 0.5% spread
+          centralRate: ngnPerUsd,
+          sellingRate: ngnPerUsd * 1.005,
+        });
+      } else if (rates[code]) {
+        // Calculate how many NGN for 1 unit of this currency
+        // rates[code] = how many [code] per 1 USD
+        // So 1 [code] = (1 / rates[code]) USD = (ngnPerUsd / rates[code]) NGN
+        const ngnPerUnit = ngnPerUsd / rates[code];
+        
+        currencies.push({
+          code,
+          name: currencyInfo[code] || code,
+          buyingRate: ngnPerUnit * 0.995,
+          centralRate: ngnPerUnit,
+          sellingRate: ngnPerUnit * 1.005,
+        });
+      }
     }
 
-    console.log(`Returning ${currencies.length} currencies with USD rate: ${usdRate}`);
+    console.log(`Returning ${currencies.length} currencies with USD rate: ₦${ngnPerUsd.toFixed(2)}`);
 
     return new Response(
       JSON.stringify({
-        success: fetchSuccess,
-        lastUpdated: new Date().toISOString(),
+        success: true,
+        lastUpdated: data.time_last_update_utc || new Date().toISOString(),
         currencies,
-        latestRate,
-        source: fetchSuccess ? 'CBN Website' : 'Fallback Data',
+        latestRate: {
+          date: new Date().toISOString().split('T')[0],
+          nfemRate: ngnPerUsd,
+          closingRate: ngnPerUsd,
+          averageRate: ngnPerUsd,
+        },
+        source: 'ExchangeRate-API',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error fetching CBN rates:', error);
+    console.error('Error fetching exchange rates:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
-    // Return comprehensive fallback data
+    // Return fallback data with error info
     const fallbackUsdRate = 1550;
     const fallbackCurrencies: CurrencyRate[] = [
       { code: 'USD', name: 'US Dollar', buyingRate: 1542, centralRate: 1550, sellingRate: 1558 },
+      { code: 'EUR', name: 'Euro', buyingRate: 1665, centralRate: 1674, sellingRate: 1682 },
+      { code: 'GBP', name: 'British Pound', buyingRate: 1959, centralRate: 1969, sellingRate: 1978 },
+      { code: 'CHF', name: 'Swiss Franc', buyingRate: 1357, centralRate: 1364, sellingRate: 1371 },
+      { code: 'CAD', name: 'Canadian Dollar', buyingRate: 1141, centralRate: 1147, sellingRate: 1153 },
+      { code: 'AUD', name: 'Australian Dollar', buyingRate: 1002, centralRate: 1008, sellingRate: 1013 },
+      { code: 'JPY', name: 'Japanese Yen', buyingRate: 10.33, centralRate: 10.39, sellingRate: 10.44 },
+      { code: 'CNY', name: 'Chinese Yuan', buyingRate: 216, centralRate: 217, sellingRate: 218 },
+      { code: 'ZAR', name: 'South African Rand', buyingRate: 85, centralRate: 85, sellingRate: 86 },
+      { code: 'AED', name: 'UAE Dirham', buyingRate: 416, centralRate: 419, sellingRate: 421 },
     ];
-
-    for (const [code, multiplier] of Object.entries(crossRates)) {
-      const rate = fallbackUsdRate * multiplier;
-      fallbackCurrencies.push({
-        code,
-        name: currencyInfo[code] || code,
-        buyingRate: rate * 0.995,
-        centralRate: rate,
-        sellingRate: rate * 1.005,
-      });
-    }
 
     return new Response(
       JSON.stringify({ 
