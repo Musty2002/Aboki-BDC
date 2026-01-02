@@ -1,12 +1,14 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface SkeletonProps {
   className?: string;
 }
 
-const Skeleton = ({ className }: SkeletonProps) => (
-  <div className={cn("animate-pulse bg-muted rounded", className)} />
-);
+const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(({ className }, ref) => (
+  <div ref={ref} className={cn("animate-pulse bg-muted rounded", className)} />
+));
+Skeleton.displayName = "Skeleton";
 
 export const RateCardSkeleton = () => (
   <div className="bg-card rounded-xl p-3 shadow-lg">

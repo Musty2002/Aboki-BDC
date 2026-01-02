@@ -19,12 +19,13 @@ interface CBNRatesResponse {
   latestRate?: {
     date: string;
     nfemRate: number;
-    highestRate: number;
-    lowestRate: number;
+    highestRate?: number;
+    lowestRate?: number;
     closingRate: number;
     averageRate: number;
   };
   error?: string;
+  source?: string;
 }
 
 // Map currency codes to country codes for flag images
@@ -180,13 +181,13 @@ const CBNRatesScreen = forwardRef<HTMLDivElement, CBNRatesScreenProps>(
           {latestNFEM && (
             <div className="mt-2 pt-2 border-t border-border/50">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] text-muted-foreground">NFEM Rate (₦/US$)</span>
-                <span className="text-sm font-bold text-primary">
+                <span className="text-xs text-muted-foreground">Official Rate (₦/US$)</span>
+                <span className="text-base font-bold text-primary">
                   ₦{latestNFEM.nfemRate.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
               </div>
-              <div className="flex items-center justify-between mt-1 text-[10px] text-muted-foreground">
-                <span>Range: ₦{latestNFEM.lowestRate.toLocaleString()} - ₦{latestNFEM.highestRate.toLocaleString()}</span>
+              <div className="flex items-center justify-between mt-1 text-xs text-muted-foreground">
+                <span>Closing: ₦{latestNFEM.closingRate.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
           )}
