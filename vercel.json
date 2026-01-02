@@ -1,25 +1,18 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "setup.abokibdc.com.ng" }],
-      "destination": "https://abokibdc.com.ng/admin/setup",
-      "permanent": false
-    },
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "admin.abokibdc.com.ng" }],
-      "destination": "https://abokibdc.com.ng/admin",
-      "permanent": false
+      "destination": "/admin/setup"
     },
     {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "admin.abokibdc.com.ng" }],
-      "destination": "https://abokibdc.com.ng/admin/:path*",
-      "permanent": false
+      "destination": "/admin/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/"
     }
-  ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
   ]
 }
