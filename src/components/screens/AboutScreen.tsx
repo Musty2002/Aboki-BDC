@@ -141,10 +141,7 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
         {/* Footer */}
         <div className="text-center mt-4">
           <p className="text-[10px] text-muted-foreground">
-            © 2024 Aboki Bureau De Change. All rights reserved.
-          </p>
-          <p className="text-[9px] text-muted-foreground mt-1">
-            Licensed by the Central Bank of Nigeria
+            © Aboki Bureau De Change. All rights reserved.
           </p>
         </div>
       </div>
