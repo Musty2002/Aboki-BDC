@@ -127,12 +127,16 @@ async function fetchAmeerAI(): Promise<NewsArticle[]> {
     const apiUrl = 'https://api.ameerai.com/v1/api/backends/api-services/news/threads?thread_class=business&page=1&limit=10';
 
     console.log('Fetching from AmeerAI...');
+    
+    // Create headers object separately to handle potential encoding issues
+    const headers = new Headers();
+    headers.set('Authorization', `Bearer ${AMEER_API_KEY.trim()}`);
+    headers.set('Content-Type', 'application/json');
+    headers.set('Accept', 'application/json');
+    
     const response = await fetch(apiUrl, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${AMEER_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
     });
 
     if (!response.ok) {
@@ -164,7 +168,7 @@ async function fetchAmeerAI(): Promise<NewsArticle[]> {
       image: article.image || article.thumbnail || article.image_url || null,
     }));
   } catch (error) {
-    console.error('AmeerAI fetch error:', error);
+    console.error('AmeerAI fetch error:', error instanceof Error ? error.message : error);
     return [];
   }
 }
