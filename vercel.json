@@ -1,5 +1,15 @@
 {
   "rewrites": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "setup.abokibdc.com.ng" }],
+      "destination": "/admin/setup"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "admin.abokibdc.com.ng" }],
+      "destination": "/admin/$1"
+    },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
