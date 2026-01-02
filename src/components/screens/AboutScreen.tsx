@@ -1,16 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
-import { MapPin, Phone, Mail, Clock, MessageCircle, Facebook, Instagram, Twitter, Shield, Target, AlertCircle } from "lucide-react";
+import { Phone, Mail, Clock, MessageCircle, Facebook, Instagram, Twitter, Shield, Target, AlertCircle } from "lucide-react";
 import { AboutSkeleton } from "@/components/ui/LoadingSkeleton";
 import abokiLogo from "@/assets/aboki-logo.jpg";
-
-const branches = [
-  { name: "Abuja", address: "123 Central Business District, Abuja", phone: "+234 800 123 4567" },
-  { name: "Lagos", address: "45 Victoria Island, Lagos", phone: "+234 800 123 4568" },
-  { name: "Port Harcourt", address: "78 Trans Amadi, Port Harcourt", phone: "+234 800 123 4569" },
-  { name: "Kano", address: "12 Sabon Gari, Kano", phone: "+234 800 123 4570" },
-  { name: "Kaduna", address: "34 Ahmadu Bello Way, Kaduna", phone: "+234 800 123 4571" },
-  { name: "Bauchi", address: "56 Jos Road, Bauchi", phone: "+234 800 123 4572" },
-];
 
 interface AboutScreenProps {
   onRefresh?: () => Promise<void>;
@@ -92,30 +83,6 @@ const AboutScreen = forwardRef<HTMLDivElement, AboutScreenProps>(
           </div>
         </div>
 
-        {/* Branch Locations */}
-        <h3 className="text-sm font-semibold text-foreground mb-2">Our Offices</h3>
-        <div className="flex flex-col gap-2 mb-3">
-          {branches.map((branch) => (
-            <div key={branch.name} className="bg-card rounded-xl p-3 shadow-lg">
-              <div className="flex items-start gap-2">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-card-foreground text-xs">{branch.name}</h4>
-                  <p className="text-[10px] text-muted-foreground mb-1">{branch.address}</p>
-                  <a
-                    href={`tel:${branch.phone}`}
-                    className="inline-flex items-center gap-1 text-[10px] text-primary font-medium"
-                  >
-                    <Phone className="w-3 h-3" />
-                    {branch.phone}
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
         {/* Contact */}
         <h3 className="text-sm font-semibold text-foreground mb-2">Contact Us</h3>
