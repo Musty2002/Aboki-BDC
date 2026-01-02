@@ -198,10 +198,9 @@ const CBNRatesScreen = forwardRef<HTMLDivElement, CBNRatesScreenProps>(
           {/* Table Header */}
           <div className="flex items-center justify-between px-3 py-2 bg-secondary/10 border-b border-border">
             <span className="text-xs font-medium text-muted-foreground">Currency</span>
-            <div className="flex gap-2">
-              <span className="text-xs font-medium text-muted-foreground w-16 text-right">Buy</span>
-              <span className="text-xs font-medium text-muted-foreground w-16 text-right">Central</span>
-              <span className="text-xs font-medium text-muted-foreground w-16 text-right">Sell</span>
+            <div className="flex gap-4">
+              <span className="text-xs font-medium text-muted-foreground w-20 text-right">Buy</span>
+              <span className="text-xs font-medium text-muted-foreground w-20 text-right">Sell</span>
             </div>
           </div>
 
@@ -228,14 +227,11 @@ const CBNRatesScreen = forwardRef<HTMLDivElement, CBNRatesScreenProps>(
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-card-foreground font-medium w-16 text-right text-[10px]">
+              <div className="flex items-center gap-4">
+                <span className="text-card-foreground font-semibold w-20 text-right text-sm">
                   ₦{currency.buyingRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className="text-primary font-bold w-16 text-right text-xs">
-                  ₦{currency.centralRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <span className="text-card-foreground font-medium w-16 text-right text-[10px]">
+                <span className="text-card-foreground font-semibold w-20 text-right text-sm">
                   ₦{currency.sellingRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
