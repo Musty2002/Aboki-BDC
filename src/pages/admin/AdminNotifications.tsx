@@ -44,9 +44,14 @@ interface NotificationLog {
   city?: { name: string };
 }
 
+interface SubscriberStats {
+  count: number;
+}
+
 export default function AdminNotifications() {
   const [cities, setCities] = useState<City[]>([]);
   const [logs, setLogs] = useState<NotificationLog[]>([]);
+  const [subscriberCount, setSubscriberCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,17 +69,19 @@ export default function AdminNotifications() {
 
   async function fetchData() {
     try {
-      const [citiesRes, logsRes] = await Promise.all([
+      const [citiesRes, logsRes, subsRes] = await Promise.all([
         supabase.from('cities').select('id, name').eq('is_active', true).order('name'),
         supabase
           .from('notification_logs')
           .select('*, city:cities(name)')
           .order('sent_at', { ascending: false })
           .limit(20),
+        supabase.from('push_subscriptions').select('id', { count: 'exact', head: true }),
       ]);
 
       if (citiesRes.data) setCities(citiesRes.data);
       if (logsRes.data) setLogs(logsRes.data as unknown as NotificationLog[]);
+      setSubscriberCount(subsRes.count || 0);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -192,11 +199,19 @@ export default function AdminNotifications() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Push Notifications</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Send broadcast notifications to app subscribers
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Push Notifications</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Send broadcast notifications to app subscribers
+          </p>
+        </div>
+        <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-lg">
+          <Bell className="h-5 w-5 text-slate-600" />
+          <span className="text-sm font-medium text-slate-700">
+            {subscriberCount} subscriber{subscriberCount !== 1 ? 's' : ''}
+          </span>
+        </div>
       </div>
 
       {/* Compose form */}
