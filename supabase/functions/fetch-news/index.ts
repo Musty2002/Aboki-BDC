@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 const CACHE_DURATION_MINUTES = 30;
+const SEND_NEWS_NOTIFICATION = true; // Enable push notifications for new news
 
 interface NewsArticle {
   id: number;
@@ -244,6 +245,31 @@ serve(async (req) => {
 
     console.log(`After deduplication: ${articles.length} articles`);
 
+    // Check if we have new articles compared to cache
+    let hasNewArticles = false;
+    let newArticleTitle = '';
+    
+    const { data: oldCache } = await supabase
+      .from('news_cache')
+      .select('articles')
+      .order('fetched_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (oldCache && oldCache.articles) {
+      const oldTitles = new Set((oldCache.articles as NewsArticle[]).map(a => a.title.toLowerCase()));
+      const newArticle = articles.find(a => !oldTitles.has(a.title.toLowerCase()));
+      if (newArticle) {
+        hasNewArticles = true;
+        newArticleTitle = newArticle.title;
+        console.log(`Found new article: ${newArticleTitle}`);
+      }
+    } else {
+      // First time fetching - consider all articles as new
+      hasNewArticles = articles.length > 0;
+      newArticleTitle = articles[0]?.title || '';
+    }
+
     // Save to cache (only if we got articles)
     if (articles.length > 0) {
       // Delete old cache entries first
@@ -258,6 +284,70 @@ serve(async (req) => {
         console.error('Failed to cache news:', cacheError);
       } else {
         console.log('News cached successfully');
+      }
+
+      // Send push notification for new articles
+      if (SEND_NEWS_NOTIFICATION && hasNewArticles && newArticleTitle) {
+        console.log('Sending news update push notification...');
+        
+        // Get all push subscriptions
+        const { data: subscriptions } = await supabase
+          .from('push_subscriptions')
+          .select('endpoint');
+
+        if (subscriptions && subscriptions.length > 0) {
+          const fcmServerKey = Deno.env.get('FCM_SERVER_KEY');
+          
+          if (fcmServerKey) {
+            let successCount = 0;
+            let failureCount = 0;
+            
+            for (const sub of subscriptions) {
+              try {
+                const fcmResponse = await fetch('https://fcm.googleapis.com/fcm/send', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `key=${fcmServerKey}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    to: sub.endpoint,
+                    notification: {
+                      title: '📰 New Forex News',
+                      body: newArticleTitle.length > 80 ? newArticleTitle.substring(0, 77) + '...' : newArticleTitle,
+                      sound: 'default',
+                    },
+                    data: { type: 'news_update' },
+                    priority: 'high',
+                  }),
+                });
+
+                if (fcmResponse.ok) {
+                  successCount++;
+                } else {
+                  failureCount++;
+                }
+              } catch (e) {
+                failureCount++;
+                console.error('Push notification error:', e);
+              }
+            }
+
+            console.log(`News notifications sent: ${successCount} success, ${failureCount} failed`);
+
+            // Log the notification
+            await supabase.from('notification_logs').insert({
+              title: '📰 New Forex News',
+              body: newArticleTitle.length > 80 ? newArticleTitle.substring(0, 77) + '...' : newArticleTitle,
+              target_type: 'all',
+              sent_count: subscriptions.length,
+              success_count: successCount,
+              failure_count: failureCount,
+            });
+          }
+        } else {
+          console.log('No push subscribers to notify');
+        }
       }
     }
 
