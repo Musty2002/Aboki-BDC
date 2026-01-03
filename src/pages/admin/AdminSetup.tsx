@@ -31,6 +31,38 @@ export default function AdminSetup() {
     setSteps(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
   };
 
+  const invokeSetupFunction = async <T,>(
+    functionName: string,
+    body: Record<string, unknown>
+  ): Promise<T> => {
+    const { data, error, response } = await supabase.functions.invoke(functionName, { body });
+
+    if (error) {
+      let message = error.message;
+
+      // FunctionsHttpError returns a Response in `response`. Try to extract the server-provided error message.
+      try {
+        if (response) {
+          const contentType = response.headers.get('Content-Type') || '';
+
+          if (contentType.includes('application/json')) {
+            const json = (await response.json().catch(() => null)) as any;
+            message = json?.error || json?.message || message;
+          } else {
+            const text = await response.text().catch(() => '');
+            if (text) message = text;
+          }
+        }
+      } catch {
+        // ignore parse errors; fall back to generic message
+      }
+
+      throw new Error(message);
+    }
+
+    return data as T;
+  };
+
   const runSetup = async () => {
     if (!setupKey || !adminEmail || !adminPassword) {
       toast({
@@ -46,16 +78,13 @@ export default function AdminSetup() {
     // Step 1: Create super admin
     updateStep('admin', { status: 'loading' });
     try {
-      const { data: adminResult, error: adminError } = await supabase.functions.invoke('setup-admin', {
-        body: {
-          setupKey,
-          email: adminEmail,
-          password: adminPassword,
-          fullName: adminName || 'Super Admin',
-        },
+      const adminResult = await invokeSetupFunction<any>('setup-admin', {
+        setupKey,
+        email: adminEmail,
+        password: adminPassword,
+        fullName: adminName || 'Super Admin',
       });
 
-      if (adminError) throw new Error(adminError.message);
       if (adminResult?.error) throw new Error(adminResult.error);
 
       updateStep('admin', { status: 'success', message: `Created: ${adminEmail}` });
@@ -67,16 +96,13 @@ export default function AdminSetup() {
     // Step 2: Seed branches
     updateStep('branches', { status: 'loading' });
     try {
-      const { data: branchResult, error: branchError } = await supabase.functions.invoke('seed-branches', {
-        body: { setupKey },
-      });
+      const branchResult = await invokeSetupFunction<any>('seed-branches', { setupKey });
 
-      if (branchError) throw new Error(branchError.message);
       if (branchResult?.error) throw new Error(branchResult.error);
 
-      updateStep('branches', { 
-        status: 'success', 
-        message: `${branchResult.branchesCreated} branches, ${branchResult.ratesCreated} rates` 
+      updateStep('branches', {
+        status: 'success',
+        message: `${branchResult.branchesCreated} branches, ${branchResult.ratesCreated} rates`,
       });
     } catch (error: any) {
       updateStep('branches', { status: 'error', message: error.message });
