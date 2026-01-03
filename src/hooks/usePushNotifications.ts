@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -12,6 +11,7 @@ export interface PushNotificationState {
 }
 
 const STORAGE_KEY = 'push_subscription_id';
+const AUTO_PROMPT_KEY = 'push_auto_prompted';
 
 export const usePushNotifications = () => {
   const [state, setState] = useState<PushNotificationState>({
@@ -21,84 +21,145 @@ export const usePushNotifications = () => {
     subscriptionId: localStorage.getItem(STORAGE_KEY),
   });
 
-  useEffect(() => {
-    // Check if running on native platform
-    const isNative = Capacitor.isNativePlatform();
-    setState(prev => ({ ...prev, isSupported: isNative }));
+  // Check if already registered
+  const checkExistingSubscription = useCallback(async () => {
+    const existingId = localStorage.getItem(STORAGE_KEY);
+    if (existingId) {
+      // Verify it still exists in database
+      const { data } = await supabase
+        .from('push_subscriptions')
+        .select('id')
+        .eq('id', existingId)
+        .single();
 
-    if (!isNative) {
-      console.log('Push notifications not supported on web');
-      return;
-    }
-
-    // Check current permission status
-    PushNotifications.checkPermissions().then(result => {
-      if (result.receive === 'granted') {
-        registerPush();
+      if (data) {
+        setState(prev => ({
+          ...prev,
+          isRegistered: true,
+          subscriptionId: existingId,
+        }));
+        return true;
+      } else {
+        // Subscription was deleted, clear local storage
+        localStorage.removeItem(STORAGE_KEY);
       }
-    });
-
-    // Listen for registration success
-    PushNotifications.addListener('registration', async (token: Token) => {
-      console.log('Push registration success:', token.value);
-      await saveSubscription(token.value);
-    });
-
-    // Listen for registration errors
-    PushNotifications.addListener('registrationError', (error) => {
-      console.error('Push registration error:', error);
-      toast({
-        title: 'Notification Error',
-        description: 'Failed to register for push notifications',
-        variant: 'destructive',
-      });
-    });
-
-    // Listen for push notifications received while app is open
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      console.log('Push notification received:', notification);
-      toast({
-        title: notification.title || 'Notification',
-        description: notification.body || '',
-        duration: 10000,
-      });
-    });
-
-    // Listen for push notification action (when user taps notification)
-    PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
-      console.log('Push notification action:', action);
-      // Handle navigation or other actions based on notification data
-    });
-
-    return () => {
-      PushNotifications.removeAllListeners();
-    };
+    }
+    return false;
   }, []);
 
-  const registerPush = async () => {
+  // Web Push registration
+  const registerWebPush = useCallback(async () => {
+    if (!('Notification' in window)) {
+      console.log('Web notifications not supported');
+      return false;
+    }
+
     try {
+      // Request permission
+      const permission = await Notification.requestPermission();
+      
+      if (permission !== 'granted') {
+        console.log('Notification permission denied');
+        return false;
+      }
+
+      // Generate a unique token for web (using a combination of user agent and timestamp)
+      const webToken = `web_${btoa(navigator.userAgent).slice(0, 20)}_${Date.now()}`;
+      
+      // Check if this device already has a subscription
+      const existingToken = localStorage.getItem('web_push_token');
+      if (existingToken) {
+        const { data: existing } = await supabase
+          .from('push_subscriptions')
+          .select('id')
+          .eq('endpoint', existingToken)
+          .single();
+
+        if (existing) {
+          setState(prev => ({
+            ...prev,
+            isSupported: true,
+            isRegistered: true,
+            token: existingToken,
+            subscriptionId: existing.id,
+          }));
+          localStorage.setItem(STORAGE_KEY, existing.id);
+          return true;
+        }
+      }
+
+      // Create new subscription
+      const { data, error } = await supabase
+        .from('push_subscriptions')
+        .insert({
+          endpoint: webToken,
+          p256dh: 'web_push',
+          auth: 'web_push',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      localStorage.setItem('web_push_token', webToken);
+      localStorage.setItem(STORAGE_KEY, data.id);
+      
+      setState(prev => ({
+        ...prev,
+        isSupported: true,
+        isRegistered: true,
+        token: webToken,
+        subscriptionId: data.id,
+      }));
+
+      console.log('Web push subscription created:', data.id);
+      return true;
+    } catch (error) {
+      console.error('Error registering web push:', error);
+      return false;
+    }
+  }, []);
+
+  // Native Push registration (Capacitor)
+  const registerNativePush = useCallback(async () => {
+    try {
+      const { PushNotifications } = await import('@capacitor/push-notifications');
+
       // Request permission
       const permResult = await PushNotifications.requestPermissions();
       
       if (permResult.receive !== 'granted') {
-        toast({
-          title: 'Permission Denied',
-          description: 'Please enable notifications in your device settings',
-          variant: 'destructive',
-        });
+        console.log('Native push permission denied');
         return false;
       }
 
       // Register with FCM/APNs
       await PushNotifications.register();
+
+      // Listen for registration success
+      PushNotifications.addListener('registration', async (token) => {
+        console.log('Push registration success:', token.value);
+        await saveNativeSubscription(token.value);
+      });
+
+      // Listen for push notifications
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        console.log('Push notification received:', notification);
+        toast({
+          title: notification.title || 'Notification',
+          description: notification.body || '',
+          duration: 10000,
+        });
+      });
+
       return true;
     } catch (error) {
-      console.error('Error registering push:', error);
+      console.error('Error registering native push:', error);
       return false;
     }
-  };
+  }, []);
 
-  const saveSubscription = async (token: string) => {
+  const saveNativeSubscription = async (token: string) => {
     try {
       // Check if this token already exists
       const { data: existing } = await supabase
@@ -123,8 +184,8 @@ export const usePushNotifications = () => {
         .from('push_subscriptions')
         .insert({
           endpoint: token,
-          p256dh: 'capacitor', // Not used for native push
-          auth: 'capacitor', // Not used for native push
+          p256dh: 'capacitor',
+          auth: 'capacitor',
         })
         .select()
         .single();
@@ -139,11 +200,6 @@ export const usePushNotifications = () => {
       }));
       localStorage.setItem(STORAGE_KEY, data.id);
 
-      toast({
-        title: 'Notifications Enabled',
-        description: 'You will receive price alerts as push notifications',
-      });
-
       return data.id;
     } catch (error) {
       console.error('Error saving subscription:', error);
@@ -151,18 +207,66 @@ export const usePushNotifications = () => {
     }
   };
 
-  const requestPermission = useCallback(async () => {
-    if (!state.isSupported) {
-      toast({
-        title: 'Not Supported',
-        description: 'Push notifications require the native app',
-        variant: 'destructive',
-      });
-      return false;
-    }
+  // Auto-register on mount
+  useEffect(() => {
+    const autoRegister = async () => {
+      // Check if already registered
+      const alreadyRegistered = await checkExistingSubscription();
+      if (alreadyRegistered) {
+        console.log('Already registered for push notifications');
+        setState(prev => ({ ...prev, isSupported: true }));
+        return;
+      }
 
-    return await registerPush();
-  }, [state.isSupported]);
+      // Check if already prompted (don't spam the user)
+      const alreadyPrompted = localStorage.getItem(AUTO_PROMPT_KEY);
+      
+      const isNative = Capacitor.isNativePlatform();
+      setState(prev => ({ ...prev, isSupported: true }));
+
+      if (isNative) {
+        // Native: always try to register
+        await registerNativePush();
+      } else {
+        // Web: auto-prompt once, then respect user's choice
+        if (!alreadyPrompted) {
+          // Small delay to let app load first
+          setTimeout(async () => {
+            const registered = await registerWebPush();
+            localStorage.setItem(AUTO_PROMPT_KEY, 'true');
+            
+            if (registered) {
+              toast({
+                title: '🔔 Notifications Enabled',
+                description: 'You will receive forex news and rate alerts',
+                duration: 5000,
+              });
+            }
+          }, 2000);
+        }
+      }
+    };
+
+    autoRegister();
+  }, [checkExistingSubscription, registerNativePush, registerWebPush]);
+
+  const requestPermission = useCallback(async () => {
+    const isNative = Capacitor.isNativePlatform();
+    
+    if (isNative) {
+      return await registerNativePush();
+    } else {
+      const registered = await registerWebPush();
+      if (registered) {
+        toast({
+          title: '🔔 Notifications Enabled',
+          description: 'You will receive forex news and rate alerts',
+          duration: 5000,
+        });
+      }
+      return registered;
+    }
+  }, [registerNativePush, registerWebPush]);
 
   return {
     ...state,
