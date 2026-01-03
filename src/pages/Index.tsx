@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import MobileHeader from "@/components/layout/MobileHeader";
 import TabNavigation, { TabType } from "@/components/layout/TabNavigation";
 import BDCRatesScreen from "@/components/screens/BDCRatesScreen";
@@ -13,6 +13,7 @@ import { SidebarDrawer } from "@/components/layout/SidebarDrawer";
 import { NotificationPanel } from "@/components/layout/NotificationPanel";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useNativeFeatures } from "@/hooks/useNativeFeatures";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>("bdc-rates");
@@ -21,6 +22,9 @@ const Index = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const { unreadCount } = useNotifications();
   const { triggerHaptic } = useNativeFeatures();
+  
+  // Initialize push notifications - will auto-prompt for permission
+  const { isRegistered } = usePushNotifications();
 
   const handleRefresh = useCallback(async () => {
     // Simulate refresh delay
