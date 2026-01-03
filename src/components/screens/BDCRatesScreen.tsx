@@ -24,12 +24,20 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
 
     const fetchBranches = useCallback(async () => {
       try {
+        // Define major cities priority (lower = higher priority)
+        const cityPriority: Record<string, number> = {
+          'LAGOS': 1,
+          'ABUJA': 2,
+          'PORT HARCOURT': 3,
+          'KANO': 4,
+          'IBADAN': 5,
+        };
+
         // Fetch cities with their branches and rates
         const { data: cities, error: citiesError } = await supabase
           .from('cities')
           .select('id, name')
-          .eq('is_active', true)
-          .order('name');
+          .eq('is_active', true);
 
         if (citiesError) throw citiesError;
 
@@ -69,12 +77,20 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
 
         if (currenciesError) throw currenciesError;
 
+        // Sort cities by priority (major cities first, then alphabetically)
+        const sortedCities = [...(cities || [])].sort((a, b) => {
+          const priorityA = cityPriority[a.name.toUpperCase()] || 999;
+          const priorityB = cityPriority[b.name.toUpperCase()] || 999;
+          if (priorityA !== priorityB) return priorityA - priorityB;
+          return a.name.localeCompare(b.name);
+        });
+
         // Transform data to match CityData format
-        const cityData: CityData[] = (cities || []).map(city => {
+        const cityData: CityData[] = sortedCities.map(city => {
           const cityBranches = (branches || []).filter(b => b.city_id === city.id);
           
           return {
-            city: city.name,
+            city: city.name.toUpperCase(),
             branches: cityBranches.map(branch => {
               const branchRates = (rates || []).filter(r => r.branch_id === branch.id);
               
@@ -82,7 +98,7 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
                 id: branch.id,
                 name: branch.name,
                 address: branch.address,
-                city: city.name,
+                city: city.name.toUpperCase(),
                 whatsappNumber: branch.whatsapp_number || '',
                 operatingHours: branch.operating_hours,
                 rating: branch.rating,
