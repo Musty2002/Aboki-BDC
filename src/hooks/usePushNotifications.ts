@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +21,8 @@ export const usePushNotifications = () => {
     token: null,
     subscriptionId: localStorage.getItem(STORAGE_KEY),
   });
+
+  const listenersAttached = useRef(false);
 
   // Check if already registered
   const checkExistingSubscription = useCallback(async () => {
@@ -128,46 +130,59 @@ export const usePushNotifications = () => {
 
       // Request permission
       const permResult = await PushNotifications.requestPermissions();
-      
+
       if (permResult.receive !== 'granted') {
         console.log('Native push permission denied');
         return false;
       }
 
+      // Attach listeners BEFORE registering so we don't miss fast "registration" events
+      if (!listenersAttached.current) {
+        listenersAttached.current = true;
+
+        PushNotifications.addListener('registration', async (token) => {
+          console.log('Push registration success:', token.value);
+          await saveNativeSubscription(token.value);
+        });
+
+        PushNotifications.addListener('registrationError', (err) => {
+          console.error('Push registration error:', err);
+          toast({
+            title: 'Push registration failed',
+            description: 'Please try enabling notifications again.',
+            variant: 'destructive',
+          });
+        });
+
+        // Listen for push notifications
+        PushNotifications.addListener('pushNotificationReceived', async (notification) => {
+          console.log('Push notification received:', notification);
+
+          // Show local notification when app is in foreground
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                id: Date.now(),
+                title: notification.title || 'Notification',
+                body: notification.body || '',
+                schedule: { at: new Date(Date.now() + 100) },
+                sound: 'default',
+                smallIcon: 'ic_stat_icon_config_sample',
+                largeIcon: 'ic_launcher',
+              },
+            ],
+          });
+
+          toast({
+            title: notification.title || 'Notification',
+            description: notification.body || '',
+            duration: 10000,
+          });
+        });
+      }
+
       // Register with FCM/APNs
       await PushNotifications.register();
-
-      // Listen for registration success
-      PushNotifications.addListener('registration', async (token) => {
-        console.log('Push registration success:', token.value);
-        await saveNativeSubscription(token.value);
-      });
-
-      // Listen for push notifications
-      PushNotifications.addListener('pushNotificationReceived', async (notification) => {
-        console.log('Push notification received:', notification);
-        
-        // Show local notification when app is in foreground
-        await LocalNotifications.schedule({
-          notifications: [
-            {
-              id: Date.now(),
-              title: notification.title || 'Notification',
-              body: notification.body || '',
-              schedule: { at: new Date(Date.now() + 100) },
-              sound: 'default',
-              smallIcon: 'ic_stat_icon_config_sample',
-              largeIcon: 'ic_launcher',
-            },
-          ],
-        });
-        
-        toast({
-          title: notification.title || 'Notification',
-          description: notification.body || '',
-          duration: 10000,
-        });
-      });
 
       return true;
     } catch (error) {
