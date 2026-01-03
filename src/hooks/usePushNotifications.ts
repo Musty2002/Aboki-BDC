@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -143,8 +144,24 @@ export const usePushNotifications = () => {
       });
 
       // Listen for push notifications
-      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+      PushNotifications.addListener('pushNotificationReceived', async (notification) => {
         console.log('Push notification received:', notification);
+        
+        // Show local notification when app is in foreground
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              id: Date.now(),
+              title: notification.title || 'Notification',
+              body: notification.body || '',
+              schedule: { at: new Date(Date.now() + 100) },
+              sound: 'default',
+              smallIcon: 'ic_stat_icon_config_sample',
+              largeIcon: 'ic_launcher',
+            },
+          ],
+        });
+        
         toast({
           title: notification.title || 'Notification',
           description: notification.body || '',
