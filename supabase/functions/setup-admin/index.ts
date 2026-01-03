@@ -31,20 +31,20 @@ serve(async (req) => {
       );
     }
 
-    // Check if super_admin already exists
-    const { data: existingAdmins, error: checkError } = await supabase
-      .from('user_roles')
+    // Check if this email already exists
+    const { data: existingUser, error: checkError } = await supabase
+      .from('profiles')
       .select('id')
-      .eq('role', 'super_admin')
-      .limit(1);
+      .eq('email', email)
+      .maybeSingle();
 
     if (checkError) {
-      throw new Error(`Error checking existing admins: ${checkError.message}`);
+      throw new Error(`Error checking existing user: ${checkError.message}`);
     }
 
-    if (existingAdmins && existingAdmins.length > 0) {
+    if (existingUser) {
       return new Response(
-        JSON.stringify({ error: 'A super admin already exists. Use the admin dashboard to add more admins.' }),
+        JSON.stringify({ error: 'A user with this email already exists.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
