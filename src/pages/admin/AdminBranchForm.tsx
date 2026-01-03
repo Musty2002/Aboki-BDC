@@ -343,7 +343,7 @@ export default function AdminBranchForm() {
               {rates.map((rate, index) => {
                 const currency = currencies.find(c => c.id === rate.currency_id);
                 return (
-                  <div key={index} className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg">
+                  <div key={index} className="flex flex-col sm:flex-row items-start gap-4 p-4 bg-slate-50 rounded-lg">
                     <div className="flex items-center gap-2 min-w-[140px]">
                       {currency && (
                         <img
@@ -368,7 +368,7 @@ export default function AdminBranchForm() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex-1 grid grid-cols-3 gap-2">
+                    <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <div>
                         <Label className="text-xs">Denomination</Label>
                         <Input
@@ -406,7 +406,7 @@ export default function AdminBranchForm() {
                       variant="ghost"
                       size="icon"
                       onClick={() => removeRate(index)}
-                      className="text-destructive hover:text-destructive mt-6"
+                      className="text-destructive hover:text-destructive self-end sm:mt-6"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
