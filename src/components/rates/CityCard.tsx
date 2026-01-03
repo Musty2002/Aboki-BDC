@@ -23,7 +23,7 @@ const CityCard = ({ cityData, onBranchSelect }: CityCardProps) => {
           </div>
           <div className="flex flex-col items-start">
             <h3 className="font-semibold text-card-foreground text-base">
-              {cityData.city} Rate
+              {cityData.city} RATE
             </h3>
             <span className="text-sm text-primary font-medium">
               {cityData.branches.length} {cityData.branches.length === 1 ? 'office' : 'offices'}
