@@ -26,8 +26,8 @@ const BDCRatesScreen = forwardRef<HTMLDivElement, BDCRatesScreenProps>(
       try {
         // Define major cities priority (lower = higher priority)
         const cityPriority: Record<string, number> = {
-          'LAGOS': 1,
-          'ABUJA': 2,
+          'ABUJA': 1,
+          'LAGOS': 2,
           'PORT HARCOURT': 3,
           'KANO': 4,
           'IBADAN': 5,
