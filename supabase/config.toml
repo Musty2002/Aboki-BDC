@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.seed-branches]
 verify_jwt = false
+
+[functions.invite-branch-admin]
+verify_jwt = false

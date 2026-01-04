@@ -112,55 +112,29 @@ export default function AdminBranchAdmins() {
     setIsInviting(true);
 
     try {
-      // Create user account
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin/login`,
-          data: {
-            full_name: formData.fullName,
-          },
+      // Get current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('You must be logged in');
+      }
+
+      // Call edge function to create user (preserves current session)
+      const { data, error } = await supabase.functions.invoke('invite-branch-admin', {
+        body: {
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          branchId: formData.branchId,
         },
       });
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Failed to create user');
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
 
-      // Add branch_admin role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: authData.user.id,
-          role: 'branch_admin',
-        });
-
-      if (roleError) throw roleError;
-
-      // Assign to branch
-      const { data: assignmentData, error: assignError } = await supabase
-        .from('branch_admins')
-        .insert({
-          user_id: authData.user.id,
-          branch_id: formData.branchId,
-          assigned_by: user?.id,
-        })
-        .select(`
-          id,
-          user_id,
-          branch_id,
-          assigned_at,
-          branch:branches(name, city:cities(name))
-        `)
-        .single();
-
-      if (assignError) throw assignError;
-
-      // Add to list with profile info
+      // Add to list
       const newAdmin: BranchAdmin = {
-        ...assignmentData,
-        profile: { email: formData.email, full_name: formData.fullName },
-        branch: assignmentData.branch as unknown as { name: string; city: { name: string } },
+        ...data.admin,
+        branch: data.admin.branch as unknown as { name: string; city: { name: string } },
       };
 
       setAdmins(prev => [newAdmin, ...prev]);
