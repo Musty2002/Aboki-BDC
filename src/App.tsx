@@ -20,6 +20,7 @@ import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminBranchAdmins from "./pages/admin/AdminBranchAdmins";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminSetup from "./pages/admin/AdminSetup";
+import AdminMyBranch from "./pages/admin/AdminMyBranch";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { AdminProtectedRoute } from "./components/admin/AdminProtectedRoute";
 
@@ -104,6 +105,7 @@ const App = () => {
                     <Route path="rates" element={<AdminRates />} />
                     <Route path="notifications" element={<AdminNotifications />} />
                     <Route path="branch-admins" element={<AdminBranchAdmins />} />
+                    <Route path="my-branch" element={<AdminMyBranch />} />
                     <Route path="settings" element={<AdminSettings />} />
                   </Route>
 
