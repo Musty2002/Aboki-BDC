@@ -116,60 +116,98 @@ async function fetchNewsAPI(): Promise<NewsArticle[]> {
   }
 }
 
-// Fetch from AmeerAI API
-async function fetchAmeerAI(): Promise<NewsArticle[]> {
-  const AMEER_API_KEY = Deno.env.get('AMEER_AI_API_KEY');
-  if (!AMEER_API_KEY) {
-    console.log('AmeerAI API key not configured, skipping...');
+// Fetch from GNews API (free tier)
+async function fetchGNews(): Promise<NewsArticle[]> {
+  const GNEWS_API_KEY = Deno.env.get('GNEWS_API_KEY');
+  if (!GNEWS_API_KEY) {
+    console.log('GNews API key not configured, skipping...');
     return [];
   }
 
   try {
-    const apiUrl = 'https://api.ameerai.com/v1/api/backends/api-services/news/threads?thread_class=business&page=1&limit=10';
+    const apiUrl = new URL('https://gnews.io/api/v4/search');
+    apiUrl.searchParams.set('q', 'naira OR forex OR "exchange rate" OR CBN');
+    apiUrl.searchParams.set('lang', 'en');
+    apiUrl.searchParams.set('country', 'ng');
+    apiUrl.searchParams.set('max', '10');
+    apiUrl.searchParams.set('apikey', GNEWS_API_KEY);
 
-    console.log('Fetching from AmeerAI...');
-    
-    // Create headers object separately to handle potential encoding issues
-    const headers = new Headers();
-    headers.set('Authorization', `Bearer ${AMEER_API_KEY.trim()}`);
-    headers.set('Content-Type', 'application/json');
-    headers.set('Accept', 'application/json');
-    
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: headers,
-    });
+    console.log('Fetching from GNews...');
+    const response = await fetch(apiUrl.toString());
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('AmeerAI API error:', response.status, errorText);
+      console.error('GNews API error:', response.status, errorText);
       return [];
     }
 
     const data = await response.json();
-    console.log(`AmeerAI returned ${data.data?.length || data.threads?.length || 0} articles`);
+    console.log(`GNews returned ${data.articles?.length || 0} articles`);
 
-    // Handle different response formats from AmeerAI
-    const articles = data.data || data.threads || data.results || [];
-    
-    return articles.map((article: any, index: number) => ({
+    return (data.articles || []).map((article: any, index: number) => ({
       id: 200 + index,
-      title: article.title || article.headline || 'Untitled',
-      excerpt: article.summary || article.description || article.content?.substring(0, 200) || '',
-      date: article.published_at || article.created_at 
-        ? new Date(article.published_at || article.created_at).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          }) 
-        : 'Recent',
-      category: article.category || article.thread_class || 'Business',
-      url: article.url || article.link || null,
-      source: article.source || 'AmeerAI',
-      image: article.image || article.thumbnail || article.image_url || null,
+      title: article.title || 'Untitled',
+      excerpt: article.description || article.content || '',
+      date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) : 'Recent',
+      category: 'Finance',
+      url: article.url || null,
+      source: article.source?.name || 'GNews',
+      image: article.image || null,
     }));
   } catch (error) {
-    console.error('AmeerAI fetch error:', error instanceof Error ? error.message : error);
+    console.error('GNews fetch error:', error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
+// Fetch from The Guardian API (free tier)
+async function fetchGuardian(): Promise<NewsArticle[]> {
+  const GUARDIAN_API_KEY = Deno.env.get('GUARDIAN_API_KEY');
+  if (!GUARDIAN_API_KEY) {
+    console.log('Guardian API key not configured, skipping...');
+    return [];
+  }
+
+  try {
+    const apiUrl = new URL('https://content.guardianapis.com/search');
+    apiUrl.searchParams.set('q', 'nigeria naira OR forex OR currency');
+    apiUrl.searchParams.set('section', 'business|money');
+    apiUrl.searchParams.set('show-fields', 'trailText,thumbnail');
+    apiUrl.searchParams.set('page-size', '10');
+    apiUrl.searchParams.set('api-key', GUARDIAN_API_KEY);
+
+    console.log('Fetching from The Guardian...');
+    const response = await fetch(apiUrl.toString());
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Guardian API error:', response.status, errorText);
+      return [];
+    }
+
+    const data = await response.json();
+    console.log(`Guardian returned ${data.response?.results?.length || 0} articles`);
+
+    return (data.response?.results || []).map((article: any, index: number) => ({
+      id: 300 + index,
+      title: article.webTitle || 'Untitled',
+      excerpt: article.fields?.trailText || '',
+      date: article.webPublicationDate ? new Date(article.webPublicationDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }) : 'Recent',
+      category: article.sectionName || 'Business',
+      url: article.webUrl || null,
+      source: 'The Guardian',
+      image: article.fields?.thumbnail || null,
+    }));
+  } catch (error) {
+    console.error('Guardian fetch error:', error instanceof Error ? error.message : error);
     return [];
   }
 }
@@ -224,14 +262,15 @@ serve(async (req) => {
 
     // Fetch from all sources in parallel
     console.log('Fetching fresh news from all sources...');
-    const [mediaStackArticles, newsAPIArticles, ameerAIArticles] = await Promise.all([
+    const [mediaStackArticles, newsAPIArticles, gNewsArticles, guardianArticles] = await Promise.all([
       fetchMediaStack(),
       fetchNewsAPI(),
-      fetchAmeerAI(),
+      fetchGNews(),
+      fetchGuardian(),
     ]);
 
     // Combine all articles
-    const allArticles = [...mediaStackArticles, ...newsAPIArticles, ...ameerAIArticles];
+    const allArticles = [...mediaStackArticles, ...newsAPIArticles, ...gNewsArticles, ...guardianArticles];
     console.log(`Total articles from all sources: ${allArticles.length}`);
 
     // Deduplicate and sort by date
