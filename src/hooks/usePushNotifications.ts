@@ -128,8 +128,19 @@ export const usePushNotifications = () => {
     try {
       const { PushNotifications } = await import('@capacitor/push-notifications');
 
-      // Request permission
-      const permResult = await PushNotifications.requestPermissions();
+      // Request permission first
+      let permResult;
+      try {
+        permResult = await PushNotifications.requestPermissions();
+      } catch (permError) {
+        console.warn('Push permission request failed (FCM not configured):', permError);
+        toast({
+          title: 'Notifications unavailable',
+          description: 'Push notifications require Firebase setup. Using local notifications instead.',
+          duration: 5000,
+        });
+        return false;
+      }
 
       if (permResult.receive !== 'granted') {
         console.log('Native push permission denied');
@@ -147,11 +158,14 @@ export const usePushNotifications = () => {
 
         PushNotifications.addListener('registrationError', (err) => {
           console.error('Push registration error:', err);
-          toast({
-            title: 'Push registration failed',
-            description: 'Please try enabling notifications again.',
-            variant: 'destructive',
-          });
+          // Don't show error toast for FCM config issues - already handled
+          if (!String(err).includes('Firebase') && !String(err).includes('google-services')) {
+            toast({
+              title: 'Push registration failed',
+              description: 'Please try enabling notifications again.',
+              variant: 'destructive',
+            });
+          }
         });
 
         // Listen for push notifications
@@ -181,12 +195,28 @@ export const usePushNotifications = () => {
         });
       }
 
-      // Register with FCM/APNs
-      await PushNotifications.register();
+      // Register with FCM/APNs - wrapped in try/catch for missing config
+      try {
+        await PushNotifications.register();
+      } catch (regError) {
+        console.warn('FCM registration failed (google-services.json missing):', regError);
+        toast({
+          title: 'Push notifications unavailable',
+          description: 'Firebase configuration is required for push notifications.',
+          duration: 5000,
+        });
+        return false;
+      }
 
       return true;
     } catch (error) {
       console.error('Error registering native push:', error);
+      // Show user-friendly message instead of crashing
+      toast({
+        title: 'Notifications setup incomplete',
+        description: 'Push notifications will be available after Firebase is configured.',
+        duration: 5000,
+      });
       return false;
     }
   }, []);
