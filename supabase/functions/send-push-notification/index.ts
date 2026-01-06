@@ -18,10 +18,15 @@ interface ServiceAccount {
   client_email: string;
 }
 
-// Base64URL encode for JWT
-function base64UrlEncode(data: Uint8Array | string): string {
-  const str = typeof data === 'string' ? data : new TextDecoder().decode(data);
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+// Base64URL encode helpers for JWT (safe for UTF-8)
+function base64UrlEncodeBytes(bytes: Uint8Array): string {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlEncodeString(str: string): string {
+  return base64UrlEncodeBytes(new TextEncoder().encode(str));
 }
 
 // Create JWT for FCM authentication
@@ -43,8 +48,8 @@ async function createJWT(serviceAccount: ServiceAccount): Promise<string> {
     scope: 'https://www.googleapis.com/auth/firebase.messaging',
   };
 
-  const headerB64 = base64UrlEncode(JSON.stringify(header));
-  const payloadB64 = base64UrlEncode(JSON.stringify(payload));
+  const headerB64 = base64UrlEncodeString(JSON.stringify(header));
+  const payloadB64 = base64UrlEncodeString(JSON.stringify(payload));
   const unsignedToken = `${headerB64}.${payloadB64}`;
 
   // Import the private key and sign
@@ -73,7 +78,7 @@ async function createJWT(serviceAccount: ServiceAccount): Promise<string> {
     new TextEncoder().encode(unsignedToken)
   );
 
-  const signatureB64 = base64UrlEncode(new Uint8Array(signature));
+  const signatureB64 = base64UrlEncodeBytes(new Uint8Array(signature));
   return `${unsignedToken}.${signatureB64}`;
 }
 
@@ -108,9 +113,13 @@ serve(async (req) => {
   }
 
   try {
-    const serviceAccountJson = Deno.env.get('FIREBASE_SERVICE_ACCOUNT');
+    const serviceAccountJsonRaw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT');
+    const serviceAccountJson = serviceAccountJsonRaw?.trim();
     if (!serviceAccountJson) {
       throw new Error('FIREBASE_SERVICE_ACCOUNT not configured');
+    }
+    if (!serviceAccountJson.startsWith('{')) {
+      throw new Error('FIREBASE_SERVICE_ACCOUNT must be the full service account JSON (it should start with "{"). Please update the secret with the JSON contents.');
     }
 
     const serviceAccount: ServiceAccount = JSON.parse(serviceAccountJson);

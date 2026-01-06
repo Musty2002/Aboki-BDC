@@ -104,10 +104,11 @@ export default function AdminNotifications() {
     setIsSending(true);
 
     try {
-      // Get all push subscriptions
+      // Get native (FCM) push subscriptions only
       const { data: subscriptions, error: subError } = await supabase
         .from('push_subscriptions')
-        .select('endpoint, p256dh, auth');
+        .select('endpoint, p256dh, auth')
+        .eq('auth', 'capacitor');
 
       if (subError) throw subError;
 
