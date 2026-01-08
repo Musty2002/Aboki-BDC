@@ -128,7 +128,7 @@ export default function AdminNotifications() {
 
       for (const sub of subscriptions) {
         try {
-          const { error } = await supabase.functions.invoke('send-push-notification', {
+          const { data, error } = await supabase.functions.invoke('send-push-notification', {
             body: {
               token: sub.endpoint,
               title: formData.title,
@@ -136,10 +136,17 @@ export default function AdminNotifications() {
             },
           });
 
-          if (error) {
-            failureCount++;
-          } else {
+          const ok = !error && (data as any)?.success === true;
+          if (ok) {
             successCount++;
+          } else {
+            failureCount++;
+
+            // Clean up stale tokens so we don't keep "sending" to devices that uninstalled the app
+            const errorCode = (data as any)?.errorCode;
+            if (errorCode === 'UNREGISTERED') {
+              await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+            }
           }
         } catch {
           failureCount++;

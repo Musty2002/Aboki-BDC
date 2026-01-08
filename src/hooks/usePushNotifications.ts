@@ -147,6 +147,29 @@ export const usePushNotifications = () => {
         return false;
       }
 
+      // Local notifications permission is required to show notifications while the app is open (especially on iOS)
+      try {
+        await LocalNotifications.requestPermissions();
+      } catch (e) {
+        console.warn('Local notification permission request failed:', e);
+      }
+
+      // Ensure a default Android notification channel exists
+      if (Capacitor.getPlatform() === 'android') {
+        try {
+          await LocalNotifications.createChannel({
+            id: 'default',
+            name: 'Default',
+            description: 'General notifications',
+            importance: 5,
+            sound: 'default',
+          });
+        } catch (e) {
+          // Channel may already exist
+          console.warn('Failed to create notification channel:', e);
+        }
+      }
+
       // Attach listeners BEFORE registering so we don't miss fast "registration" events
       if (!listenersAttached.current) {
         listenersAttached.current = true;
@@ -172,20 +195,24 @@ export const usePushNotifications = () => {
         PushNotifications.addListener('pushNotificationReceived', async (notification) => {
           console.log('Push notification received:', notification);
 
-          // Show local notification when app is in foreground
-          await LocalNotifications.schedule({
-            notifications: [
-              {
-                id: Date.now(),
-                title: notification.title || 'Notification',
-                body: notification.body || '',
-                schedule: { at: new Date(Date.now() + 100) },
-                sound: 'default',
-                smallIcon: 'ic_stat_icon_config_sample',
-                largeIcon: 'ic_launcher',
-              },
-            ],
-          });
+          // When the app is in the foreground, FCM doesn't always show a system notification.
+          // We mirror it with a local notification so it appears in the notification tray.
+          try {
+            await LocalNotifications.schedule({
+              notifications: [
+                {
+                  id: Date.now(),
+                  title: notification.title || 'Notification',
+                  body: notification.body || '',
+                  schedule: { at: new Date(Date.now() + 100) },
+                  sound: 'default',
+                  channelId: 'default',
+                },
+              ],
+            });
+          } catch (e) {
+            console.warn('Failed to schedule foreground local notification:', e);
+          }
 
           toast({
             title: notification.title || 'Notification',
@@ -223,6 +250,36 @@ export const usePushNotifications = () => {
 
   const saveNativeSubscription = async (token: string) => {
     try {
+      const existingId = localStorage.getItem(STORAGE_KEY);
+
+      // If we already have a saved subscription ID for this device, keep it up to date.
+      // FCM tokens can rotate (reinstall, restore, updates), and stale tokens become UNREGISTERED.
+      if (existingId) {
+        const { data: updated, error: updateError } = await supabase
+          .from('push_subscriptions')
+          .update({
+            endpoint: token,
+            p256dh: 'capacitor',
+            auth: 'capacitor',
+          })
+          .eq('id', existingId)
+          .select('id')
+          .single();
+
+        if (!updateError && updated) {
+          setState(prev => ({
+            ...prev,
+            isRegistered: true,
+            token,
+            subscriptionId: updated.id,
+          }));
+          return updated.id;
+        }
+
+        // If the row was deleted, clear and fall through to re-create.
+        localStorage.removeItem(STORAGE_KEY);
+      }
+
       // Check if this token already exists
       const { data: existing } = await supabase
         .from('push_subscriptions')
@@ -272,22 +329,23 @@ export const usePushNotifications = () => {
   // Auto-register on mount
   useEffect(() => {
     const autoRegister = async () => {
+      const isNative = Capacitor.isNativePlatform();
+
       // Check if already registered
       const alreadyRegistered = await checkExistingSubscription();
-      if (alreadyRegistered) {
+      setState(prev => ({ ...prev, isSupported: true }));
+
+      // Native tokens can rotate; always re-register to refresh the token.
+      // Web: keep the old behavior (don't auto-prompt repeatedly).
+      if (alreadyRegistered && !isNative) {
         console.log('Already registered for push notifications');
-        setState(prev => ({ ...prev, isSupported: true }));
         return;
       }
 
       // Check if already prompted (don't spam the user)
       const alreadyPrompted = localStorage.getItem(AUTO_PROMPT_KEY);
-      
-      const isNative = Capacitor.isNativePlatform();
-      setState(prev => ({ ...prev, isSupported: true }));
 
       if (isNative) {
-        // Native: always try to register
         await registerNativePush();
       } else {
         // Web: auto-prompt once, then respect user's choice
@@ -296,7 +354,7 @@ export const usePushNotifications = () => {
           setTimeout(async () => {
             const registered = await registerWebPush();
             localStorage.setItem(AUTO_PROMPT_KEY, 'true');
-            
+
             if (registered) {
               toast({
                 title: '🔔 Notifications Enabled',

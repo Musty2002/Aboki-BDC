@@ -158,7 +158,8 @@ serve(async (req) => {
               priority: 'high',
               notification: {
                 sound: 'default',
-                channelId: 'default',
+                // FCM HTTP v1 expects snake_case here
+                channel_id: 'default',
               },
             },
             apns: {
@@ -177,10 +178,19 @@ serve(async (req) => {
     console.log('FCM Response:', JSON.stringify(fcmResult));
 
     if (!fcmResponse.ok) {
+      const errorCode =
+        fcmResult?.error?.details?.find((d: any) => d?.errorCode)?.errorCode || null;
+
       console.error('FCM send failed:', fcmResult);
+
+      // Return 200 so the client can inspect success/errorCode without throwing
       return new Response(
-        JSON.stringify({ success: false, error: 'Failed to send notification', details: fcmResult }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({
+          success: false,
+          errorCode,
+          details: fcmResult,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
